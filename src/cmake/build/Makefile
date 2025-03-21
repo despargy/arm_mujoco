@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/despinar/mujoco_ws/otd_humanoid/src/cmake
+CMAKE_SOURCE_DIR = /home/despargy/mujoco_ws/arm_mujoco/src/cmake
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/despinar/mujoco_ws/otd_humanoid/src/cmake/build
+CMAKE_BINARY_DIR = /home/despargy/mujoco_ws/arm_mujoco/src/cmake/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -69,8 +69,8 @@ rebuild_cache/fast: rebuild_cache
 
 # Special rule for the target edit_cache
 edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/usr/bin/ccmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/despinar/mujoco_ws/otd_humanoid/src/cmake/build/CMakeFiles /home/despinar/mujoco_ws/otd_humanoid/src/cmake/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/despargy/mujoco_ws/arm_mujoco/src/cmake/build/CMakeFiles /home/despargy/mujoco_ws/arm_mujoco/src/cmake/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/despinar/mujoco_ws/otd_humanoid/src/cmake/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/despargy/mujoco_ws/arm_mujoco/src/cmake/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -137,19 +137,6 @@ std_msgs_generate_messages_nodejs/fast:
 .PHONY : std_msgs_generate_messages_nodejs/fast
 
 #=============================================================================
-# Target rules for targets named stand
-
-# Build rule for target.
-stand: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 stand
-.PHONY : stand
-
-# fast build rule for target.
-stand/fast:
-	$(MAKE) -f CMakeFiles/stand.dir/build.make CMakeFiles/stand.dir/build
-.PHONY : stand/fast
-
-#=============================================================================
 # Target rules for targets named roscpp_generate_messages_cpp
 
 # Build rule for target.
@@ -187,6 +174,19 @@ rosgraph_msgs_generate_messages_nodejs: cmake_check_build_system
 rosgraph_msgs_generate_messages_nodejs/fast:
 	$(MAKE) -f CMakeFiles/rosgraph_msgs_generate_messages_nodejs.dir/build.make CMakeFiles/rosgraph_msgs_generate_messages_nodejs.dir/build
 .PHONY : rosgraph_msgs_generate_messages_nodejs/fast
+
+#=============================================================================
+# Target rules for targets named arm
+
+# Build rule for target.
+arm: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 arm
+.PHONY : arm
+
+# fast build rule for target.
+arm/fast:
+	$(MAKE) -f CMakeFiles/arm.dir/build.make CMakeFiles/arm.dir/build
+.PHONY : arm/fast
 
 #=============================================================================
 # Target rules for targets named std_msgs_generate_messages_lisp
@@ -318,32 +318,32 @@ rosgraph_msgs_generate_messages_py/fast:
 	$(MAKE) -f CMakeFiles/rosgraph_msgs_generate_messages_py.dir/build.make CMakeFiles/rosgraph_msgs_generate_messages_py.dir/build
 .PHONY : rosgraph_msgs_generate_messages_py/fast
 
-home/despinar/mujoco_ws/otd_humanoid/src/stand.o: home/despinar/mujoco_ws/otd_humanoid/src/stand.cpp.o
+home/despargy/mujoco_ws/arm_mujoco/src/arm.o: home/despargy/mujoco_ws/arm_mujoco/src/arm.cpp.o
 
-.PHONY : home/despinar/mujoco_ws/otd_humanoid/src/stand.o
+.PHONY : home/despargy/mujoco_ws/arm_mujoco/src/arm.o
 
 # target to build an object file
-home/despinar/mujoco_ws/otd_humanoid/src/stand.cpp.o:
-	$(MAKE) -f CMakeFiles/stand.dir/build.make CMakeFiles/stand.dir/home/despinar/mujoco_ws/otd_humanoid/src/stand.cpp.o
-.PHONY : home/despinar/mujoco_ws/otd_humanoid/src/stand.cpp.o
+home/despargy/mujoco_ws/arm_mujoco/src/arm.cpp.o:
+	$(MAKE) -f CMakeFiles/arm.dir/build.make CMakeFiles/arm.dir/home/despargy/mujoco_ws/arm_mujoco/src/arm.cpp.o
+.PHONY : home/despargy/mujoco_ws/arm_mujoco/src/arm.cpp.o
 
-home/despinar/mujoco_ws/otd_humanoid/src/stand.i: home/despinar/mujoco_ws/otd_humanoid/src/stand.cpp.i
+home/despargy/mujoco_ws/arm_mujoco/src/arm.i: home/despargy/mujoco_ws/arm_mujoco/src/arm.cpp.i
 
-.PHONY : home/despinar/mujoco_ws/otd_humanoid/src/stand.i
+.PHONY : home/despargy/mujoco_ws/arm_mujoco/src/arm.i
 
 # target to preprocess a source file
-home/despinar/mujoco_ws/otd_humanoid/src/stand.cpp.i:
-	$(MAKE) -f CMakeFiles/stand.dir/build.make CMakeFiles/stand.dir/home/despinar/mujoco_ws/otd_humanoid/src/stand.cpp.i
-.PHONY : home/despinar/mujoco_ws/otd_humanoid/src/stand.cpp.i
+home/despargy/mujoco_ws/arm_mujoco/src/arm.cpp.i:
+	$(MAKE) -f CMakeFiles/arm.dir/build.make CMakeFiles/arm.dir/home/despargy/mujoco_ws/arm_mujoco/src/arm.cpp.i
+.PHONY : home/despargy/mujoco_ws/arm_mujoco/src/arm.cpp.i
 
-home/despinar/mujoco_ws/otd_humanoid/src/stand.s: home/despinar/mujoco_ws/otd_humanoid/src/stand.cpp.s
+home/despargy/mujoco_ws/arm_mujoco/src/arm.s: home/despargy/mujoco_ws/arm_mujoco/src/arm.cpp.s
 
-.PHONY : home/despinar/mujoco_ws/otd_humanoid/src/stand.s
+.PHONY : home/despargy/mujoco_ws/arm_mujoco/src/arm.s
 
 # target to generate assembly for a file
-home/despinar/mujoco_ws/otd_humanoid/src/stand.cpp.s:
-	$(MAKE) -f CMakeFiles/stand.dir/build.make CMakeFiles/stand.dir/home/despinar/mujoco_ws/otd_humanoid/src/stand.cpp.s
-.PHONY : home/despinar/mujoco_ws/otd_humanoid/src/stand.cpp.s
+home/despargy/mujoco_ws/arm_mujoco/src/arm.cpp.s:
+	$(MAKE) -f CMakeFiles/arm.dir/build.make CMakeFiles/arm.dir/home/despargy/mujoco_ws/arm_mujoco/src/arm.cpp.s
+.PHONY : home/despargy/mujoco_ws/arm_mujoco/src/arm.cpp.s
 
 # Help Target
 help:
@@ -355,10 +355,10 @@ help:
 	@echo "... edit_cache"
 	@echo "... std_msgs_generate_messages_py"
 	@echo "... std_msgs_generate_messages_nodejs"
-	@echo "... stand"
 	@echo "... roscpp_generate_messages_cpp"
 	@echo "... roscpp_generate_messages_eus"
 	@echo "... rosgraph_msgs_generate_messages_nodejs"
+	@echo "... arm"
 	@echo "... std_msgs_generate_messages_lisp"
 	@echo "... roscpp_generate_messages_py"
 	@echo "... std_msgs_generate_messages_eus"
@@ -369,9 +369,9 @@ help:
 	@echo "... rosgraph_msgs_generate_messages_lisp"
 	@echo "... roscpp_generate_messages_lisp"
 	@echo "... rosgraph_msgs_generate_messages_py"
-	@echo "... home/despinar/mujoco_ws/otd_humanoid/src/stand.o"
-	@echo "... home/despinar/mujoco_ws/otd_humanoid/src/stand.i"
-	@echo "... home/despinar/mujoco_ws/otd_humanoid/src/stand.s"
+	@echo "... home/despargy/mujoco_ws/arm_mujoco/src/arm.o"
+	@echo "... home/despargy/mujoco_ws/arm_mujoco/src/arm.i"
+	@echo "... home/despargy/mujoco_ws/arm_mujoco/src/arm.s"
 .PHONY : help
 
 

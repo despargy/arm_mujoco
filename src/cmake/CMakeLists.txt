@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -pthread -Wl,-no-as-needed")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/src/cmake")
 
-set(PCE_CPP ${PCE_CPP} "/home/despinar/Workspaces/ProbabilisticContactEstimation")
+# set(PCE_CPP ${PCE_CPP} "/home/despinar/Workspaces/ProbabilisticContactEstimation")
 
 # You may need to adjust the path to Eigen3
 find_package(Eigen3 REQUIRED)
@@ -34,8 +34,8 @@ link_directories(${orocos_kdl_LIBRARY_DIRS})
 
 include_directories(
     ../../include
-    "${PCE_CPP}/kdepp/include/kdepp/"
-    "${PCE_CPP}/include"    
+    # "${PCE_CPP}/kdepp/include/kdepp/"
+    # "${PCE_CPP}/include"    
     ${NLOPT_INCLUDE_DIRS}
     ${OROCOS_KDL_INCLUDE_DIRS}
 )
@@ -45,5 +45,5 @@ include_directories(
 #     "${PCE_CPP}/src/pce.cpp"
 # )
 
-add_executable(stand ../stand.cpp  ) #${STAND_CPP}
-target_link_libraries(stand ${NLOPT_LIBRARIES} ${orocos_kdl_LIBRARIES} ${kdl_parser_LIBRARIES} m mujoco glfw)
+add_executable(arm ../arm.cpp  ) #${STAND_CPP}
+target_link_libraries(arm ${NLOPT_LIBRARIES} ${orocos_kdl_LIBRARIES} ${kdl_parser_LIBRARIES} m mujoco glfw)

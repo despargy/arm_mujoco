@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/despinar/mujoco_ws/otd_humanoid/src/cmake
+CMAKE_SOURCE_DIR = /home/despargy/mujoco_ws/arm_mujoco/src/cmake
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/despinar/mujoco_ws/otd_humanoid/src/cmake/build
+CMAKE_BINARY_DIR = /home/despargy/mujoco_ws/arm_mujoco/src/cmake/build
 
 # Utility rule file for roscpp_generate_messages_nodejs.
 
@@ -67,6 +67,6 @@ CMakeFiles/roscpp_generate_messages_nodejs.dir/clean:
 .PHONY : CMakeFiles/roscpp_generate_messages_nodejs.dir/clean
 
 CMakeFiles/roscpp_generate_messages_nodejs.dir/depend:
-	cd /home/despinar/mujoco_ws/otd_humanoid/src/cmake/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/despinar/mujoco_ws/otd_humanoid/src/cmake /home/despinar/mujoco_ws/otd_humanoid/src/cmake /home/despinar/mujoco_ws/otd_humanoid/src/cmake/build /home/despinar/mujoco_ws/otd_humanoid/src/cmake/build /home/despinar/mujoco_ws/otd_humanoid/src/cmake/build/CMakeFiles/roscpp_generate_messages_nodejs.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/despargy/mujoco_ws/arm_mujoco/src/cmake/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/despargy/mujoco_ws/arm_mujoco/src/cmake /home/despargy/mujoco_ws/arm_mujoco/src/cmake /home/despargy/mujoco_ws/arm_mujoco/src/cmake/build /home/despargy/mujoco_ws/arm_mujoco/src/cmake/build /home/despargy/mujoco_ws/arm_mujoco/src/cmake/build/CMakeFiles/roscpp_generate_messages_nodejs.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/roscpp_generate_messages_nodejs.dir/depend
 
