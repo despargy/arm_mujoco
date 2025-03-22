@@ -16,8 +16,8 @@
   <br>
 
 <!-- add image -->
-   <img src="../arm_mujoco/src/assets/ur5_arm_mjx.png" alt="Maestro Mujoco" width="600">
    <br>
+   <a href="https://github.com/despargy/arm_mujoco/src/assets/ur5_arm_mjx.png"><img src="/src/assets/ur5_arm_mjx.png" alt="Maestro Mujoco" width="600"></a>
    <br>
 
 </h1>
