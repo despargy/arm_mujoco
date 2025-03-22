@@ -4,15 +4,9 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/despargy/mujoco_ws/arm_mujoco/src/arm.cpp" "/home/despargy/mujoco_ws/arm_mujoco/src/cmake/build/CMakeFiles/arm.dir/home/despargy/mujoco_ws/arm_mujoco/src/arm.cpp.o"
+  "/home/despinar/mujoco_ws/arm_mujoco/src/arm.cpp" "/home/despinar/mujoco_ws/arm_mujoco/src/cmake/build/CMakeFiles/arm.dir/home/despinar/mujoco_ws/arm_mujoco/src/arm.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
-
-# Preprocessor definitions for this target.
-set(CMAKE_TARGET_DEFINITIONS_CXX
-  "ROSCONSOLE_BACKEND_LOG4CXX"
-  "ROS_PACKAGE_NAME=\"otd_humanoid\""
-  )
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH

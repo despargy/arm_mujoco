@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/despargy/mujoco_ws/arm_mujoco/src/arm.cpp
+/home/despinar/mujoco_ws/arm_mujoco/src/arm.cpp
 stdbool.h
 -
 mujoco/mujoco.h
