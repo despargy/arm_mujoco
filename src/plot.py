@@ -4,8 +4,7 @@ from matplotlib import pyplot as plt
 from mpl_toolkits import mplot3d
 import os
 
-os.chdir("./cmake/build")
-data = np.genfromtxt("./data.csv", delimiter="\t", skip_header=0)
+data = np.genfromtxt("./data.csv", delimiter=",", skip_header=1)
 print(data)
 print(data.shape)
 time = data[:,0]
@@ -60,13 +59,13 @@ pd2 = data[:,9]
 
 
 plt.figure()
-plt.plot(time,pc0,Label="p x")
-plt.plot(time,pc1,Label="p y")
-plt.plot(time,pc2,Label="p z")
+plt.plot(time,pc0,label="p x")
+plt.plot(time,pc1,label="p y")
+plt.plot(time,pc2,label="p z")
 
-plt.plot(time,pd0,Label="pd x")
-plt.plot(time,pd1,Label="pd y")
-plt.plot(time,pd2,Label="pd z")
+plt.plot(time,pd0,label="pd x")
+plt.plot(time,pd1,label="pd y")
+plt.plot(time,pd2,label="pd z")
 
 
 plt.legend()
@@ -75,5 +74,5 @@ plt.ylabel("Desired position (EE)")
 plt.title("Desired  - time")
 
 plt.show()
-plt.waitforbuttonpress(0) # this will wait for indefinite timeplt.close(fig)
+# plt.waitforbuttonpress(0) # this will wait for indefinite timeplt.close(fig)
 plt.close('all')

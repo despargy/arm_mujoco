@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/arm.dir/home/despinar/mujoco_ws/arm_mujoco/src/arm.cpp.o"
+  "CMakeFiles/arm.dir/Users/dimitrisgkoutzounis/Documents/GitHub/arm_mujoco/src/arm.cpp.o"
+  "CMakeFiles/arm.dir/Users/dimitrisgkoutzounis/Documents/GitHub/arm_mujoco/src/arm.cpp.o.d"
   "arm"
   "arm.pdb"
 )
