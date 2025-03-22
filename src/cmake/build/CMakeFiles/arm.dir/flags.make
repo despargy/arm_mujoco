@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_FLAGS =  -O3 -pthread -Wl,-no-as-needed   -std=c++11 -lorocos-kdl -std=gnu++17
 
-CXX_DEFINES = -DROSCONSOLE_BACKEND_LOG4CXX -DROS_PACKAGE_NAME=\"otd_humanoid\"
+CXX_DEFINES = 
 
-CXX_INCLUDES = -I/usr/include/eigen3 -I/home/despargy/mujoco_ws/arm_mujoco/src/cmake/-I/usr/include/eigen3 -I/home/despargy/mujoco_ws/arm_mujoco/src/cmake/../../include 
+CXX_INCLUDES = -I/usr/include/eigen3 -I/home/despinar/mujoco_ws/arm_mujoco/src/cmake/-I/usr/include/eigen3 -I/home/despinar/mujoco_ws/arm_mujoco/src/cmake/../../include 
 
