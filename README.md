@@ -15,6 +15,10 @@
   Robotic arm in  <a href="https://mujoco.org/" target="_blank">Mujoco</a>
   <br>
 
+<!-- add image -->
+   <img src="../arm_mujoco/src/assets/ur5_arm_mjx.png" alt="Maestro Mujoco" width="600">
+   <br>
+   <br>
 
 </h1>
 
