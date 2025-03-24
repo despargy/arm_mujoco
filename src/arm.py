@@ -62,14 +62,14 @@ def my_controller(model, data):
         return
 
     if data.time < t_init:
-        data.ctrl[:] = q_desired
+        data.ctrl[:6] = q_desired
         q_out[:] = data.qpos[:6]
         p0[:] = data.xpos[ee_body_id]
     else:
         jacp = np.zeros((3, model.nv))
         mujoco.mj_jacBody(model, data, jacp, None, ee_body_id)
-        J = jacp
-
+        Jall = jacp
+        J = Jall[:3, :6]  # Only the first 3 rows (linear velocity)
         # Pseudo-inverse
         U, S, Vt = np.linalg.svd(J, full_matrices=False)
         S_inv = np.array([1/s if s > 1e-2 else 0.0 for s in S])
