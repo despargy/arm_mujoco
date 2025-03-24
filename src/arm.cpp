@@ -123,10 +123,12 @@ double kp = 15;
 const double freq = 2.0;
 const double Az = 0.05, Ay = 0.01, Ax = 0.01; 
 // Eigen vectors definition
-Eigen::Vector3d p0, p_d, dp_d, p_c, dp_c, ep;
+Eigen::Vector3d p0, p_d, dp_d, p_c, dp_c, ep, base_ur5e_p0;
 Eigen::VectorXd q_out = Eigen::VectorXd::Zero(6);
 Eigen::VectorXd dq_out = Eigen::VectorXd::Zero(6);
 
+// New addition after import go2
+const int nv_arm = 6;
 // Control Cb for arm's periodic motion
 void my_controller(const mjModel* m, mjData* d)
 {
@@ -134,74 +136,91 @@ void my_controller(const mjModel* m, mjData* d)
 
     int ee_body_id = mj_name2id(m, mjOBJ_BODY, "wrist_3_link");  
     if (ee_body_id == -1) return;
-    
+
+    int ur5e_base_id = mj_name2id(m, mjOBJ_BODY, "base_ur5e");  
+    if (ur5e_base_id == -1) return;
+    const mjtNum base_point[3] = {0.2,0.3,0.84};
+
     // Init control for 3sec to set joint positions
     if(d->time < t_init)
     {
-        for (int i = 0; i < m->nv; i++)
+        for (int i = 0; i < nv_arm; i++)
         {
             d->ctrl[i] = q_desired[i];
             q_out(i) = d->qpos[i];
         }
         p0 = Eigen::Vector3d(d->xpos + 3 * ee_body_id);
+        base_ur5e_p0 = Eigen::Vector3d(d->xpos + 3 * ur5e_base_id);
+
+
     }
     // Main control for periodic motion
     else
     {
+        // double jacp1[3*nv_arm];
+        // Ho Ho Ho, this takes arm and go2 as a chain, but I cannot solve it in a different way 
         double jacp1[3*m->nv];
+
         Eigen::MatrixXd J;
-        J.resize(3,m->nv);
-        mj_jacBody(m,d,jacp1,NULL,ee_body_id);
-        // Convert jacp1 to Eigen J
-        for (int i = 0; i < 3; ++i)
-        {
-            for (int j = 0; j < m->nv; ++j)
-            {
-                J(i, j) = jacp1[i + 3 * j];
-            }
-        }
-        // Pseudo-inverse J, only for position
-        Eigen::JacobiSVD<Eigen::MatrixXd> svd(J, Eigen::ComputeThinU | Eigen::ComputeThinV);
-        Eigen::VectorXd singularValuesInv = svd.singularValues();
-        for (long i = 0; i < singularValuesInv.size(); ++i)
-        {
-            singularValuesInv(i) = (singularValuesInv(i) > 1e-2) ? 1.0 / singularValuesInv(i) : 0.0;
-        }
-        Eigen::MatrixXd J_pseudo_inv = svd.matrixV() * singularValuesInv.asDiagonal() * svd.matrixU().transpose();   
+        J.resize(3,nv_arm);
+        std::cout << "DOFs: " << m->nv << std::endl;
+        std::cout << "End-effector body ID: " << ee_body_id << std::endl;
+        std::cout << "Base position" << base_ur5e_p0 << std::endl;
 
-        // Get actual position of end-effector
-        Eigen::Vector3d p_c = Eigen::Vector3d(d->xpos + 3 * ee_body_id); // Actual position x,y,z, end-effector
+        // mj_jac(m,d,jacp1,NULL,base_point,ee_body_id);
 
-        int sensor_id = mj_name2id(m, mjOBJ_SENSOR, "ee_vel"); 
-        int sensor_adr = m->sensor_adr[sensor_id];
-        dp_c = Eigen::Vector3d(d->sensordata + sensor_adr); // velocities x,y,z, end-effector
+        // mj_jacSubtreeCom(m,d,jacp1,ee_body_id);
+        // mj_jacBody(m,d,jacp1,NULL,ee_body_id);
+        // // Convert jacp1 to Eigen J
+        // for (int i = 0; i < 3; ++i)
+        // {
+        //     for (int j = 0; j < nv_arm; ++j)
+        //     {
+        //         J(i, j) = jacp1[i + 3 * j];
+        //     }
+        // }
+        // // Pseudo-inverse J, only for position
+        // Eigen::JacobiSVD<Eigen::MatrixXd> svd(J, Eigen::ComputeThinU | Eigen::ComputeThinV);
+        // Eigen::VectorXd singularValuesInv = svd.singularValues();
+        // for (long i = 0; i < singularValuesInv.size(); ++i)
+        // {
+        //     singularValuesInv(i) = (singularValuesInv(i) > 1e-2) ? 1.0 / singularValuesInv(i) : 0.0;
+        // }
+        // Eigen::MatrixXd J_pseudo_inv = svd.matrixV() * singularValuesInv.asDiagonal() * svd.matrixU().transpose();   
 
-        // Define periodic motion - position
-        p_d(0) = p0(0) + Ax*sin(freq*t); 
-        p_d(1) = p0(1) + Ay*sin(freq*t);
-        p_d(2) = p0(2) + Az*sin(freq*t);
-        // Define periodic motion - velocities
-        dp_d(0) = Ax*freq*cos(freq*t);
-        dp_d(1) = Ay*freq*cos(freq*t);
-        dp_d(2) = Az*freq*cos(freq*t);  
+        // // Get actual position of end-effector
+        // Eigen::Vector3d p_c = Eigen::Vector3d(d->xpos + 3 * ee_body_id); // Actual position x,y,z, end-effector
 
-        //Error in position
-        ep = p_c - p_d; 
-        // Compute joint velocities from J pseudo
-        dq_out = J_pseudo_inv * (-kp*ep); //J.transpose()*(-kp*ep);
-        //Euler intergration
-        q_out += dq_out*0.002;
+        // int sensor_id = mj_name2id(m, mjOBJ_SENSOR, "ee_vel"); 
+        // int sensor_adr = m->sensor_adr[sensor_id];
+        // dp_c = Eigen::Vector3d(d->sensordata + sensor_adr); // velocities x,y,z, end-effector
 
-        // Data to save (./arm > data.csv)
-        std::cout<<t<<"\t"<<ep(0)<<"\t"<<ep(1)<<"\t"<<ep(2)<<"\t"
-        <<p_c(0)<<"\t"<<p_c(1)<<"\t"<<p_c(2)<<"\t"
-        <<p_d(0)<<"\t"<<p_d(1)<<"\t"<<p_d(2)<<std::endl;
+        // // Define periodic motion - position
+        // p_d(0) = p0(0) + Ax*sin(freq*t); 
+        // p_d(1) = p0(1) + Ay*sin(freq*t);
+        // p_d(2) = p0(2) + Az*sin(freq*t);
+        // // Define periodic motion - velocities
+        // dp_d(0) = Ax*freq*cos(freq*t);
+        // dp_d(1) = Ay*freq*cos(freq*t);
+        // dp_d(2) = Az*freq*cos(freq*t);  
 
-        //Send joint positions
-        for (int i = 0; i < m->nv; i++)
-        {
-            d->ctrl[i] = q_out(i);// kd * (dq_out(i) - d->qvel[i]); //q_desired[i];//
-        }
+        // //Error in position
+        // ep = p_c - p_d; 
+        // // Compute joint velocities from J pseudo
+        // dq_out = J_pseudo_inv * (-kp*ep); //J.transpose()*(-kp*ep);
+        // //Euler intergration
+        // q_out += dq_out*0.002;
+
+        // // Data to save (./arm > data.csv)
+        // std::cout<<t<<"\t"<<ep(0)<<"\t"<<ep(1)<<"\t"<<ep(2)<<"\t"
+        // <<p_c(0)<<"\t"<<p_c(1)<<"\t"<<p_c(2)<<"\t"
+        // <<p_d(0)<<"\t"<<p_d(1)<<"\t"<<p_d(2)<<std::endl;
+
+        // //Send joint positions
+        // for (int i = 0; i < nv_arm; i++)
+        // {
+        //     d->ctrl[i] = q_out(i);// kd * (dq_out(i) - d->qvel[i]); //q_desired[i];//
+        // }
 
     }
     

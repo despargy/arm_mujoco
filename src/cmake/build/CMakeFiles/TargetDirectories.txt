@@ -1,3 +1,0 @@
-/home/despinar/mujoco_ws/arm_mujoco/src/cmake/build/CMakeFiles/edit_cache.dir
-/home/despinar/mujoco_ws/arm_mujoco/src/cmake/build/CMakeFiles/rebuild_cache.dir
-/home/despinar/mujoco_ws/arm_mujoco/src/cmake/build/CMakeFiles/arm.dir
