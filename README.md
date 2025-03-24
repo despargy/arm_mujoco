@@ -2,10 +2,6 @@
 <h1 align="center">
 
 
-
-
-
-
 </h1>
 
 <h1 align="center">
@@ -39,36 +35,12 @@
 
 This repo can be used either as a tutorial and first interastion regarding robotic arms either..... as a scene for another package. Stay tuned!
 
-
-## Clone and build(C++)
-
-   ```sh
-   git clone https://github.com/despargy/arm_mujoco.git
-   ```
 ## Clone and Run(Python)
 
    ```sh
    git clone https://github.com/despargy/arm_mujoco.git
    cd arm_mujoco/src
    python3 arm.py
-   ```
-
-Build .
-   ```sh
-   cd arm_mujoco/src/cmake 
-   mkdir build
-   cd build
-   cmake ..
-   make
-   ```
-
-
-Periodic motion execution.
- ```sh
-   cd arm_mujoco/src/cmake/build
-   ./arm > data.csv # Run 
-   cd arm_mujoco/src/
-   python3 plot.py # Vizualize results
    ```
 
 Visualize Results
