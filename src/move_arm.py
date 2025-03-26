@@ -61,8 +61,11 @@ def my_controller(model, data):
     # Arm Control Cb
     arm.control_Cb(model=model, data=data)
     # Robot 
-    # data.qpos[robot_go2.i_start_ctrl:] = np.array(model.keyframe("home").qpos[robot_go2.i_start_ctrl:])
     data.ctrl[robot_go2.i_start_ctrl:robot_go2.i_end_ctrl] = np.array(model.keyframe("home").ctrl[robot_go2.i_start_ctrl:robot_go2.i_end_ctrl])
+    # Only for testing then nect 7 are the pos of the robot and then 12 are robots joints
+    # data.qpos[arm.i_start_qpos:arm.i_end_qpos] = np.array(model.keyframe("home").qpos[arm.i_start_qpos:arm.i_end_qpos])
+    # data.qpos[robot_go2.i_base_start_qpos:robot_go2.i_base_end_qpos] = np.array(model.keyframe("home").qpos[robot_go2.i_base_start_qpos:robot_go2.i_base_end_qpos])
+    # data.qpos[robot_go2.i_start_qpos:robot_go2.i_end_qpos] = np.array(model.keyframe("home").qpos[robot_go2.i_start_qpos:robot_go2.i_end_qpos])
 
     # Log Data
     csv_writer.writerow([
