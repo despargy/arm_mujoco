@@ -1,12 +1,17 @@
 import mujoco
 import glfw
 import numpy as np
+import cv2
+
 # import math
 # import time
 import csv
 import os
 from Arm import Arm
 from Robot import RobotGo2
+
+from Perception import Perception
+
 
 # ========== Paths ==========
 XML_PATH = "../xml/scene.xml"
@@ -140,6 +145,9 @@ while not glfw.window_should_close(window):
     width, height = glfw.get_framebuffer_size(window)
     viewport = mujoco.MjrRect(0, 0, width, height)
     mujoco.mjr_render(viewport, scene, context)
+    
+    perception = Perception()
+    perception.get_rgbd(model, data, context)
 
     # Swap + handle input
     glfw.swap_buffers(window)
