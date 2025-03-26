@@ -38,9 +38,9 @@ This repo can be used either as a tutorial and first interastion regarding robot
 ## Clone and Run(Python)
 
    ```sh
-   git clone https://github.com/despargy/arm_mujoco.git
+   git clone -b main_python https://github.com/despargy/arm_mujoco.git
    cd arm_mujoco/src
-   python3 arm.py
+   python3 move_arm.py
    ```
 
 Visualize Results
