@@ -7,7 +7,8 @@ HEIGHT = 480
 
 class Perception:
     def __init__(self):
-        pass
+        self.width = WIDTH #TBD replace with local variables instead?
+        self.height = HEIGHT
     
 
     def get_rgbd(self, model: mujoco.MjModel, data: mujoco.MjData, context: mujoco.MjrContext):
