@@ -6,7 +6,7 @@
   <include file="robots/ventionTable.xml"/>
   <!-- <include file="robots/defaults.xml"/> -->
   <include file="robots/universal_robots_ur5e/ur5e.xml"/>
-  <include file="robots/unitree_go2/go2.xml"/>
+  <include file="robots/unitree_go2/go2_mjx.xml"/>
 
   <visual>
     <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
@@ -30,5 +30,17 @@
 
 
   </worldbody>
+  <keyframe>
+    <key name="home" qpos="
+    -1.5708 -1.5708 1.5708 -1.5708 -1.5708 0 
+    0 0 0.278
+    1 0 0 0
+    0.1 0.9 -1.8
+    -0.1 0.9 -1.8
+    0.1 0.9 -1.8
+    -0.1 0.9 -1.8"
+    ctrl="-1.5708 -1.5708 1.5708 -1.5708 -1.5708 0 0.1 0.9 -1.8 -0.1 0.9 -1.8 0.1 0.9 -1.8 -0.1 0.9 -1.8"/>
+
+  </keyframe>
 
 </mujoco>
