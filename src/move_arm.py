@@ -1,7 +1,6 @@
 import mujoco
 import glfw
 import numpy as np
-import cv2
 
 # import math
 # import time
