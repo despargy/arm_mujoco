@@ -105,6 +105,9 @@
       <inertial pos="0.021112 0 -0.005366" quat="-0.000543471 0.713435 -0.00173769 0.700719" mass="6.921"
         diaginertia="0.107027 0.0980771 0.0244531"/>
       <freejoint/>
+      <!-- Add camera -->
+      <camera name="realsense_cam" pos="0.2 0 0.4" euler="0 -0.9 0" fovy="60"/>
+
       <!-- Revised base collision geoms: two cylindrical approximations -->
       <geom class="collision" type="cylinder" quat="1 0 1 0" pos="0 -0.04 0" size="0.058 0.125"/>
       <geom class="collision" type="cylinder" quat="1 0 1 0" pos="0 0.04 0" size="0.058 0.125"/>
