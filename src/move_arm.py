@@ -6,6 +6,7 @@ import numpy as np
 import csv
 import os
 from Arm import Arm
+from Robot import RobotGo2
 
 # ========== Paths ==========
 XML_PATH = "../xml/scene.xml"
@@ -28,6 +29,7 @@ model = mujoco.MjModel.from_xml_path(XML_PATH)
 data = mujoco.MjData(model)
 # ========== Create Arm Model ==========
 arm = Arm(model=model, data=data)
+robot_go2 = RobotGo2()
 # ========== Logging ==========
 csv_file = open(DATA_LOG, 'w', newline='')
 csv_writer = csv.writer(csv_file)
@@ -58,6 +60,10 @@ cam.lookat[:] = arr_view[3:]
 def my_controller(model, data):
     # Arm Control Cb
     arm.control_Cb(model=model, data=data)
+    # Robot 
+    # data.qpos[robot_go2.i_start_ctrl:] = np.array(model.keyframe("home").qpos[robot_go2.i_start_ctrl:])
+    data.ctrl[robot_go2.i_start_ctrl:robot_go2.i_end_ctrl] = np.array(model.keyframe("home").ctrl[robot_go2.i_start_ctrl:robot_go2.i_end_ctrl])
+
     # Log Data
     csv_writer.writerow([
             data.time,
