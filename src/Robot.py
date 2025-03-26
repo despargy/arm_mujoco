@@ -8,3 +8,5 @@ class RobotGo2:
         self.i_start_ctrl = 6
         self.i_end_ctrl = self.i_start_ctrl +  12 # 12 general actuators
 
+        self.i_start_qpos = 8
+        self.i_end_qpos = self.i_start_qpos +  19 # 12 general actuators
