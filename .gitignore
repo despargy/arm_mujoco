@@ -1,2 +1,3 @@
 .vscode/
 /src/cmake/build/
+/src/__pycache__
