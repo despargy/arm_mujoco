@@ -1,31 +1,33 @@
 import mujoco
 import glfw
 import numpy as np
-import math
-import time
+# import math
+# import time
 import csv
 import os
+from Arm import Arm
 
 # ========== Paths ==========
 XML_PATH = "../xml/scene.xml"
 DATA_LOG = "data.csv"
 
 # ========== Simulation Constants ==========
-q_desired = np.array([-0.75, -1.57, 1.57, -0.37, -2.45, -2.45])
-t_init = 3.0
-kp = 15
-freq = 2.0
-Ax, Ay, Az = 0.01, 0.01, 0.05
+# q_desired = np.array([-0.75, -1.57, 1.57, -0.37, -2.45, -2.45])
+# t_init = 3.0
+# kp = 15
+# freq = 2.0
+# Ax, Ay, Az = 0.01, 0.01, 0.05
 
 # ========== Global Variables ==========
-p0 = np.zeros(3)
-q_out = np.zeros(6)
-dq_out = np.zeros(6)
+# p0 = np.zeros(3)
+# q_out = np.zeros(6)
+# dq_out = np.zeros(6)
 
 # ========== Load Model ==========
 model = mujoco.MjModel.from_xml_path(XML_PATH)
 data = mujoco.MjData(model)
-
+# ========== Create Arm Model ==========
+arm = Arm(model=model, data=data)
 # ========== Logging ==========
 csv_file = open(DATA_LOG, 'w', newline='')
 csv_writer = csv.writer(csv_file)
@@ -54,57 +56,14 @@ cam.lookat[:] = arr_view[3:]
 
 # ========== Controller ==========
 def my_controller(model, data):
-    global p0, q_out, dq_out
-
-    t = data.time - t_init
-    ee_body_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "wrist_3_link")
-    if ee_body_id == -1:
-        return
-
-    if data.time < t_init:
-        data.ctrl[:6] = q_desired
-        q_out[:] = data.qpos[:6]
-        p0[:] = data.xpos[ee_body_id]
-    else:
-        jacp = np.zeros((3, model.nv))
-        mujoco.mj_jacBody(model, data, jacp, None, ee_body_id)
-        Jall = jacp
-        J = Jall[:3, :6]  # Only the first 3 rows (linear velocity)
-        # Pseudo-inverse
-        U, S, Vt = np.linalg.svd(J, full_matrices=False)
-        S_inv = np.array([1/s if s > 1e-2 else 0.0 for s in S])
-        J_pinv = Vt.T @ np.diag(S_inv) @ U.T
-
-        # Actual position and velocity
-        p_c = data.xpos[ee_body_id]
-        dp_c = data.cvel[ee_body_id][:3]  # local linear vel
-
-        # Desired trajectory
-        p_d = p0 + np.array([
-            Ax * np.sin(freq * t),
-            Ay * np.sin(freq * t),
-            Az * np.sin(freq * t)
-        ])
-        dp_d = np.array([
-            Ax * freq * np.cos(freq * t),
-            Ay * freq * np.cos(freq * t),
-            Az * freq * np.cos(freq * t)
-        ])
-
-        # Error and control
-        ep = p_c - p_d
-        dq_out = J_pinv @ (-kp * ep)
-        q_out += dq_out * 0.002
-
-        # Send joint commands
-        data.ctrl[:6] = q_out
-
-        # Log
-        csv_writer.writerow([
+    # Arm Control Cb
+    arm.control_Cb(model=model, data=data)
+    # Log Data
+    csv_writer.writerow([
             data.time,
-            ep[0], ep[1], ep[2],
-            p_c[0], p_c[1], p_c[2],
-            p_d[0], p_d[1], p_d[2]
+            arm.ep[0], arm.ep[1],  arm.ep[2],
+            arm.p_c[0],arm.p_c[1], arm.p_c[2],
+            arm.p_d[0],arm.p_d[1], arm.p_d[2]
         ])
 
 
