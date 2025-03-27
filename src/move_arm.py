@@ -86,7 +86,16 @@ glfw.set_scroll_callback(window, scroll_callback)
 
 # ========== Control Logic ==========
 def my_controller(model, data):
+    #Cb for periodic motion
     arm.control_Cb(model=model, data=data)
+
+    #Print joint mapping
+    # for i in range(model.njnt):
+    #     joint_name = model.joint(i).name
+    #     dof_start = model.jnt_dofadr[i]  # Index where this joint's velocity starts in qvel
+    #     dof_count = 1 if model.jnt_type[i] in (mujoco.mjtJoint.mjJNT_HINGE, mujoco.mjtJoint.mjJNT_SLIDE) else 6
+    #     print(f"Joint {joint_name}: qvel[{dof_start}:{dof_start + dof_count}]")
+
     data.ctrl[robot_go2.i_start_ctrl:robot_go2.i_end_ctrl] = model.keyframe("home").ctrl[robot_go2.i_start_ctrl:robot_go2.i_end_ctrl]
     csv_writer.writerow([
         data.time,
