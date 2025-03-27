@@ -1,7 +1,7 @@
 <mujoco model="main scene">
 
   <statistic center="3 0 0.1" extent="0.8"/>
-	<option timestep="0.004"/>
+	<option timestep="0.002"/>
 
   <include file="robots/ventionTable.xml"/>
   <!-- <include file="robots/defaults.xml"/> -->

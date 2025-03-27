@@ -2,7 +2,7 @@
   <!-- <compiler angle="radian" meshdir="assets" autolimits="true"/> -->
   <compiler angle="radian" meshdir="robots/its_all_a_mesh" autolimits="true"/>
 
-  <option iterations="1" ls_iterations="5" timestep="0.004" integrator="Euler">
+  <option iterations="1" ls_iterations="5" timestep="0.002" integrator="Euler">
     <flag eulerdamp="disable"/>
   </option>
 
