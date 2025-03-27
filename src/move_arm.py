@@ -1,45 +1,31 @@
 import mujoco
 import glfw
 import numpy as np
-
-# import math
-# import time
+import cv2
 import csv
-import os
 from Arm import Arm
 from Robot import RobotGo2
-
 from Perception import Perception
-
 
 # ========== Paths ==========
 XML_PATH = "../xml/scene.xml"
 DATA_LOG = "data.csv"
 
-# ========== Simulation Constants ==========
-# q_desired = np.array([-0.75, -1.57, 1.57, -0.37, -2.45, -2.45])
-# t_init = 3.0
-# kp = 15
-# freq = 2.0
-# Ax, Ay, Az = 0.01, 0.01, 0.05
-
-# ========== Global Variables ==========
-# p0 = np.zeros(3)
-# q_out = np.zeros(6)
-# dq_out = np.zeros(6)
-
 # ========== Load Model ==========
 model = mujoco.MjModel.from_xml_path(XML_PATH)
 data = mujoco.MjData(model)
-# ========== Create Arm Model ==========
+
+# ========== Components ==========
 arm = Arm(model=model, data=data)
 robot_go2 = RobotGo2()
+perception = Perception()
+
 # ========== Logging ==========
 csv_file = open(DATA_LOG, 'w', newline='')
 csv_writer = csv.writer(csv_file)
 csv_writer.writerow(["time", "ep_x", "ep_y", "ep_z", "p_cx", "p_cy", "p_cz", "p_dx", "p_dy", "p_dz"])
 
-# ========== GLFW + Visualization Setup ==========
+# ========== GLFW Setup ==========
 if not glfw.init():
     raise RuntimeError("Could not initialize GLFW")
 
@@ -47,47 +33,22 @@ window = glfw.create_window(1244, 700, "MuJoCo Arm Control", None, None)
 glfw.make_context_current(window)
 glfw.swap_interval(1)
 
+# ========== Visualization Setup ==========
 cam = mujoco.MjvCamera()
 opt = mujoco.MjvOption()
 scene = mujoco.MjvScene(model, maxgeom=2000)
 context = mujoco.MjrContext(model, mujoco.mjtFontScale.mjFONTSCALE_150)
+perception_context = mujoco.MjrContext(model, mujoco.mjtFontScale.mjFONTSCALE_100)
 
 mujoco.mjv_defaultCamera(cam)
+cam.type = mujoco.mjtCamera.mjCAMERA_FREE
 mujoco.mjv_defaultOption(opt)
 
-# Set initial camera view
-arr_view = [-90.477651, -40.102665, 3.209726, -0.047404, -0.001591, 0.330533] # [azimuth, elevation, distance, lookat_x, lookat_y, lookat_z]
-cam.azimuth, cam.elevation, cam.distance = arr_view[:3]
-cam.lookat[:] = arr_view[3:]
+cam.azimuth, cam.elevation, cam.distance = -90.48, -40.10, 3.21
+cam.lookat[:] = [-0.047404, -0.001591, 0.330533]
 
-# ========== Controller ==========
-def my_controller(model, data):
-    # Arm Control Cb
-    arm.control_Cb(model=model, data=data)
-    # Robot 
-    data.ctrl[robot_go2.i_start_ctrl:robot_go2.i_end_ctrl] = np.array(model.keyframe("home").ctrl[robot_go2.i_start_ctrl:robot_go2.i_end_ctrl])
-    # Only for testing then nect 7 are the pos of the robot and then 12 are robots joints
-    # data.qpos[arm.i_start_qpos:arm.i_end_qpos] = np.array(model.keyframe("home").qpos[arm.i_start_qpos:arm.i_end_qpos])
-    # data.qpos[robot_go2.i_base_start_qpos:robot_go2.i_base_end_qpos] = np.array(model.keyframe("home").qpos[robot_go2.i_base_start_qpos:robot_go2.i_base_end_qpos])
-    # data.qpos[robot_go2.i_start_qpos:robot_go2.i_end_qpos] = np.array(model.keyframe("home").qpos[robot_go2.i_start_qpos:robot_go2.i_end_qpos])
-
-    # Log Data
-    csv_writer.writerow([
-            data.time,
-            arm.ep[0], arm.ep[1],  arm.ep[2],
-            arm.p_c[0],arm.p_c[1], arm.p_c[2],
-            arm.p_d[0],arm.p_d[1], arm.p_d[2]
-        ])
-
-
-
-mouse = {
-    "left": False,
-    "middle": False,
-    "right": False,
-    "last_x": 0.0,
-    "last_y": 0.0
-}
+# ========== Mouse Handling ==========
+mouse = {"left": False, "middle": False, "right": False, "last_x": 0.0, "last_y": 0.0}
 
 def mouse_button_callback(window, button, action, mods):
     mouse["left"] = glfw.get_mouse_button(window, glfw.MOUSE_BUTTON_LEFT) == glfw.PRESS
@@ -99,17 +60,12 @@ def mouse_button_callback(window, button, action, mods):
 def cursor_pos_callback(window, xpos, ypos):
     if not (mouse["left"] or mouse["middle"] or mouse["right"]):
         return
-
     dx = xpos - mouse["last_x"]
     dy = ypos - mouse["last_y"]
-    mouse["last_x"] = xpos
-    mouse["last_y"] = ypos
-
+    mouse["last_x"], mouse["last_y"] = xpos, ypos
     width, height = glfw.get_window_size(window)
     dx /= height
     dy /= height
-
-    # Determine camera action
     if mouse["right"]:
         action = mujoco.mjtMouse.mjMOUSE_MOVE_H if (mouse["mods"] & glfw.MOD_SHIFT) else mujoco.mjtMouse.mjMOUSE_MOVE_V
     elif mouse["left"]:
@@ -118,7 +74,6 @@ def cursor_pos_callback(window, xpos, ypos):
         action = mujoco.mjtMouse.mjMOUSE_ZOOM
     else:
         return
-
     mujoco.mjv_moveCamera(model, action, dx, dy, scene, cam)
 
 def scroll_callback(window, xoffset, yoffset):
@@ -129,26 +84,34 @@ glfw.set_mouse_button_callback(window, mouse_button_callback)
 glfw.set_cursor_pos_callback(window, cursor_pos_callback)
 glfw.set_scroll_callback(window, scroll_callback)
 
+# ========== Control Logic ==========
+def my_controller(model, data):
+    arm.control_Cb(model=model, data=data)
+    data.ctrl[robot_go2.i_start_ctrl:robot_go2.i_end_ctrl] = model.keyframe("home").ctrl[robot_go2.i_start_ctrl:robot_go2.i_end_ctrl]
+    csv_writer.writerow([
+        data.time,
+        arm.ep[0], arm.ep[1], arm.ep[2],
+        arm.p_c[0], arm.p_c[1], arm.p_c[2],
+        arm.p_d[0], arm.p_d[1], arm.p_d[2]
+    ])
 
 # ========== Main Loop ==========
 while not glfw.window_should_close(window):
     my_controller(model, data)
 
-    # Step simulation (60 FPS)
     sim_start = data.time
     while data.time - sim_start < 1.0 / 60.0:
         mujoco.mj_step(model, data)
 
-    # Rendering
     mujoco.mjv_updateScene(model, data, opt, None, cam, mujoco.mjtCatBit.mjCAT_ALL, scene)
     width, height = glfw.get_framebuffer_size(window)
     viewport = mujoco.MjrRect(0, 0, width, height)
     mujoco.mjr_render(viewport, scene, context)
-    
-    perception = Perception()
-    perception.get_rgbd(model, data, context)
 
-    # Swap + handle input
+    glfw.make_context_current(window)
+    perception.get_rgbd(model, data, perception_context)
+    # glfw.make_context_current(window) #maybe we can comment ths line
+
     glfw.swap_buffers(window)
     glfw.poll_events()
 
