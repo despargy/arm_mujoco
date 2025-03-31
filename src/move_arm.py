@@ -45,7 +45,7 @@ cam.type = mujoco.mjtCamera.mjCAMERA_FREE
 mujoco.mjv_defaultOption(opt)
 
 cam.azimuth, cam.elevation, cam.distance = -90.48, -40.10, 3.21
-cam.lookat[:] = [-0.047404, -0.001591, 0.330533]
+cam.lookat[:] = [2.5, -1, 0.3]
 
 # ========== Mouse Handling ==========
 mouse = {"left": False, "middle": False, "right": False, "last_x": 0.0, "last_y": 0.0}
@@ -97,6 +97,7 @@ def my_controller(model, data):
     #     print(f"Joint {joint_name}: qvel[{dof_start}:{dof_start + dof_count}]")
 
     data.ctrl[robot_go2.i_start_ctrl:robot_go2.i_end_ctrl] = model.keyframe("home").ctrl[robot_go2.i_start_ctrl:robot_go2.i_end_ctrl]
+
     csv_writer.writerow([
         data.time,
         arm.ep[0], arm.ep[1], arm.ep[2],
@@ -118,7 +119,8 @@ while not glfw.window_should_close(window):
     mujoco.mjr_render(viewport, scene, context)
 
     glfw.make_context_current(window)
-    perception.get_rgbd(model, data, perception_context)
+    # perception.get_rgbd(model, data, perception_context)
+    perception.get_rgbd_auto_AOI(model, data, perception_context)
     # glfw.make_context_current(window) #maybe we can comment ths line
 
     glfw.swap_buffers(window)
