@@ -24,6 +24,10 @@ class Perception:
         self.canvas = None
 
     def get_rgbd(self, model: mujoco.MjModel, data: mujoco.MjData, context: mujoco.MjrContext):
+        
+        """Simple camera view, currently not in use."""
+        
+        
         rgb = np.zeros((self.height, self.width, 3), dtype=np.uint8)
         depth = np.zeros((self.height, self.width), dtype=np.float32)
 
@@ -144,47 +148,53 @@ class Perception:
         
     def get_rgbd_auto_AOI(self, model: mujoco.MjModel, data: mujoco.MjData, context: mujoco.MjrContext):
         
-
         rgb, _ = self._render_camera_view(model, data, context)
         
         # Process images
         rgb_bgr = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
-        rgb_bgr = cv2.rotate(rgb_bgr, cv2.ROTATE_90_COUNTERCLOCKWISE)
-        
-        # optical flow solution
-        # depth_gray = cv2.cvtColor(rgb_bgr, cv2.COLOR_BGR2GRAY)
+        rgb_bgr = cv2.rotate(rgb_bgr, cv2.ROTATE_90_COUNTERCLOCKWISE) 
         depth_gray = cv2.cvtColor(rgb_bgr, cv2.COLOR_BGR2GRAY)
 
-        
-        # print the type of gray
-        # print("Type of gray: ", type(gray))
-
-        # === Optical Flow Tracking (delayed start) ===
         current_time = time.time()
-
         if not hasattr(self, 'start_time'):
             self.start_time = current_time
-
-        if current_time - self.start_time < 1.0:
+            
+        if current_time - self.start_time < 2.0:
             # Just display camera without tracking
             # cv2.imshow("RGB Camera View", rgb_bgr)
             return
         
-        #========== Initialize optical flow tracking ========== 
         
         if not self.initialized:
             self.AOI_mask, self.Rectangle = self._define_AOI( self.width, self.height, 160, 340, 140, 180)
                     
             self.old_gray = depth_gray.copy()
                                 
-            # self.edges = cv2.goodFeaturesToTrack(self.old_gray, mask=None, **self.params_shitomasi)
-            self.edges = cv2.goodFeaturesToTrack(self.old_gray, mask=self.AOI_mask, **self.params_shitomasi)
+            try:
+                self.edges = cv2.goodFeaturesToTrack(self.old_gray, mask=self.AOI_mask, **self.params_shitomasi)
+            except cv2.error as e:
+                print(f"[ERROR] goodFeaturesToTrack failed: {e}")
+                cv2.imshow("RGB Camera View (Fallback)", rgb_bgr)
+                return
+        
             self.canvas = np.zeros_like(rgb_bgr)
             self.initialized = True
             return  # wait for next frame to do tracking
 
-        # Run sparse optical flow
-        next_points, status, _ = cv2.calcOpticalFlowPyrLK(self.old_gray, depth_gray, self.edges, None, **self.params_lucas_kanade)
+        try: 
+            
+            next_points, status, _ = cv2.calcOpticalFlowPyrLK(self.old_gray, depth_gray, self.edges, None, **self.params_lucas_kanade)
+            
+            backup_points = next_points.copy() #make a backup in case of failure
+            
+        except cv2.error as e:
+            print(f"[ERROR] Optical flow calculation failed: {e}")
+            #utilize the last good points
+            good_new = backup_points[status == 1]
+            good_old = self.edges[status == 1]
+            return 
+        
+        
         good_new = next_points[status == 1]
         good_old = self.edges[status == 1]
 
@@ -208,5 +218,3 @@ class Perception:
 
         self.old_gray = depth_gray.copy()
         self.edges = good_new.reshape(-1, 1, 2)
-
-        # cv2.waitKey(1)
