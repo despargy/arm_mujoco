@@ -85,9 +85,13 @@ glfw.set_cursor_pos_callback(window, cursor_pos_callback)
 glfw.set_scroll_callback(window, scroll_callback)
 
 # ========== Control Logic ==========
-def my_controller(model, data):
-    #Cb for periodic motion
+def my_controller(model, data, perception_context):
+    
+    # Cb for arms periodic motion
     arm.control_Cb(model=model, data=data)
+    
+    # Tracking detected edges of arm
+    perception.get_rgbd_auto_AOI(model, data, perception_context)
 
     #Print joint mapping
     # for i in range(model.njnt):
@@ -107,7 +111,7 @@ def my_controller(model, data):
 
 # ========== Main Loop ==========
 while not glfw.window_should_close(window):
-    my_controller(model, data)
+    my_controller(model, data, perception_context)
 
     sim_start = data.time
     while data.time - sim_start < 1.0 / 60.0:
@@ -120,7 +124,6 @@ while not glfw.window_should_close(window):
 
     glfw.make_context_current(window)
     # perception.get_rgbd(model, data, perception_context)
-    perception.get_rgbd_auto_AOI(model, data, perception_context)
     # glfw.make_context_current(window) #maybe we can comment ths line
 
     glfw.swap_buffers(window)
