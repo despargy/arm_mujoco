@@ -1,9 +1,6 @@
 import cv2
 import mujoco
 import numpy as np
-import datetime
-import time
-
 
 class Perception:
     def __init__(self, height=480, width=640):
@@ -155,7 +152,7 @@ class Perception:
         rgb_bgr = cv2.rotate(rgb_bgr, cv2.ROTATE_90_COUNTERCLOCKWISE) 
         depth_gray = cv2.cvtColor(rgb_bgr, cv2.COLOR_BGR2GRAY)
 
-        current_time = time.time()
+        current_time = data.time
         if not hasattr(self, 'start_time'):
             self.start_time = current_time
             
@@ -215,6 +212,7 @@ class Perception:
         
         # result = cv2.add(result, self.Rectangle)
         cv2.imshow("Optical Flow (Sparse)", result)
+        cv2.waitKey(1)
 
         self.old_gray = depth_gray.copy()
         self.edges = good_new.reshape(-1, 1, 2)
