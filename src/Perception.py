@@ -6,7 +6,7 @@ class Perception:
     def __init__(self, height=480, width=640):
         self.width = width
         self.height = height
-        
+        self.perception_context = None
         # Optical Flow Params
         self.params_shitomasi = dict(maxCorners=10, qualityLevel=0.25, minDistance=7)
         self.params_lucas_kanade = dict(
@@ -143,9 +143,9 @@ class Perception:
 
         return AOI_mask, Rectangle
         
-    def get_rgbd_auto_AOI(self, model: mujoco.MjModel, data: mujoco.MjData, context: mujoco.MjrContext):
+    def get_rgbd_auto_AOI(self, model: mujoco.MjModel, data: mujoco.MjData):
         
-        rgb, _ = self._render_camera_view(model, data, context)
+        rgb, _ = self._render_camera_view(model, data, self.perception_context)
         
         # Process images
         rgb_bgr = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)

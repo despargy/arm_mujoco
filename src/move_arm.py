@@ -38,7 +38,8 @@ cam = mujoco.MjvCamera()
 opt = mujoco.MjvOption()
 scene = mujoco.MjvScene(model, maxgeom=2000)
 context = mujoco.MjrContext(model, mujoco.mjtFontScale.mjFONTSCALE_150)
-perception_context = mujoco.MjrContext(model, mujoco.mjtFontScale.mjFONTSCALE_100)
+# Pass it to perception class
+perception.perception_context = mujoco.MjrContext(model, mujoco.mjtFontScale.mjFONTSCALE_100)
 
 mujoco.mjv_defaultCamera(cam)
 cam.type = mujoco.mjtCamera.mjCAMERA_FREE
@@ -85,13 +86,13 @@ glfw.set_cursor_pos_callback(window, cursor_pos_callback)
 glfw.set_scroll_callback(window, scroll_callback)
 
 # ========== Control Logic ==========
-def my_controller(model, data, perception_context):
+def my_controller(model, data):
     
     # Cb for arms periodic motion
     arm.control_Cb(model=model, data=data)
     
     # Tracking detected edges of arm
-    perception.get_rgbd_auto_AOI(model, data, perception_context)
+    perception.get_rgbd_auto_AOI(model, data)
 
     #Print joint mapping
     # for i in range(model.njnt):
@@ -111,7 +112,7 @@ def my_controller(model, data, perception_context):
 
 # ========== Main Loop ==========
 while not glfw.window_should_close(window):
-    my_controller(model, data, perception_context)
+    my_controller(model, data)
 
     sim_start = data.time
     while data.time - sim_start < 1.0 / 60.0:
