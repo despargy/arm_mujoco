@@ -11,7 +11,7 @@ class Perception:
         self.height = height
         
         # Optical Flow Params
-        self.params_shitomasi = dict(maxCorners=100, qualityLevel=0.25, minDistance=7)
+        self.params_shitomasi = dict(maxCorners=10, qualityLevel=0.25, minDistance=7)
         self.params_lucas_kanade = dict(
             winSize=(5, 5),
             maxLevel=2,
