@@ -16,7 +16,7 @@ model = mujoco.MjModel.from_xml_path(XML_PATH)
 data = mujoco.MjData(model)
 
 # ========== Components ==========
-arm = Arm(model=model, data=data)
+arm = Arm()
 robot_go2 = RobotGo2()
 perception = Perception()
 

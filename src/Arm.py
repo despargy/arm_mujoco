@@ -3,7 +3,7 @@ import numpy as np
 import mujoco
 
 class Arm:
-    def __init__(self, model, data):
+    def __init__(self):
 
         # Init variables
         self.q_desired = np.array([-0.75, -1.57, 1.57, -0.37, -2.45, -2.45])
@@ -11,7 +11,7 @@ class Arm:
         self.kp = 15
         self.freq = 2.0
         self.Ax, self.Ay, self.Az = 0.01, 0.01, 0.05
-        self.dt = model.opt.timestep
+        self.dt = 0.002 #model.opt.timestep
         # Position variables
         self.p0 = np.zeros(3)
         self.q_out = np.zeros(6)
@@ -24,11 +24,6 @@ class Arm:
 
         self.ep = np.zeros(3)
 
-        # End-effector body id
-        self.ee_body_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "wrist_3_link")
-        if self.ee_body_id == -1:
-            raise  ValueError("Invalid end-effector body ID (ee_body_id).")
-        
         self.J = None
         self.t = 0.0
         # Define indexing for ctrl
@@ -42,6 +37,11 @@ class Arm:
     def control_Cb(self, model, data):
         self.t = data.time - self.t_init
 
+        # End-effector body id
+        self.ee_body_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "wrist_3_link")
+        if self.ee_body_id == -1:
+            raise  ValueError("Invalid end-effector body ID (ee_body_id).")
+        
         if data.time < self.t_init:
             data.ctrl[self.i_start_ctrl:self.i_end_ctrl] = self.q_desired
             self.q_out[:] = data.qpos[self.i_start_qpos:self.i_end_qpos]
