@@ -102,6 +102,9 @@ def my_controller(model, data):
     #     print(f"Joint {joint_name}: qvel[{dof_start}:{dof_start + dof_count}]")
 
     data.ctrl[robot_go2.i_start_ctrl:robot_go2.i_end_ctrl] = model.keyframe("home").ctrl[robot_go2.i_start_ctrl:robot_go2.i_end_ctrl]
+    
+    # Check Go2 pos of robot
+    # print(robot_go2.get_CoM_pos(data=data))
 
     csv_writer.writerow([
         data.time,
