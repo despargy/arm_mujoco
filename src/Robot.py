@@ -19,6 +19,8 @@ class RobotGo2:
 
         self.pc = np.zeros(3)
         self.xquat = np.zeros(4)  # [w, x, y, z]
+        self.init_pc = np.zeros(3)
+        self.init_xquat = np.zeros(4)  # [w, x, y, z]
 
         self.base_str = 'base'
         self.base_body_id_ = 9
