@@ -6,6 +6,7 @@ import csv
 from Arm import Arm
 from Robot import RobotGo2
 from Perception import Perception
+from ConfigurationGenerator import ConfigGenerator
 
 # ========== Paths ==========
 XML_PATH = "../xml/scene.xml"
@@ -19,6 +20,10 @@ data = mujoco.MjData(model)
 arm = Arm()
 robot_go2 = RobotGo2()
 perception = Perception()
+generator = ConfigGenerator()
+
+
+
 
 # ========== Logging ==========
 csv_file = open(DATA_LOG, 'w', newline='')
@@ -85,6 +90,20 @@ glfw.set_mouse_button_callback(window, mouse_button_callback)
 glfw.set_cursor_pos_callback(window, cursor_pos_callback)
 glfw.set_scroll_callback(window, scroll_callback)
 
+
+# print(robot_go2.get_CoM_pos(data=data))
+# Update arm pos
+mujoco.mj_forward(model,data)
+
+arm_pos_quat, _ = arm.get_CoM_pos(data)
+init_config = generator.generate_config(arm_pos_quat=arm_pos_quat)
+
+robot_go2.set_CoM_pos(data,config=init_config)
+
+
+# mujoco.mj_forward(model,data)
+
+
 # ========== Control Logic ==========
 def my_controller(model, data):
     
@@ -105,6 +124,8 @@ def my_controller(model, data):
     
     # Check Go2 pos of robot
     # print(robot_go2.get_CoM_pos(data=data))
+    
+    #Check generator position
 
     csv_writer.writerow([
         data.time,
@@ -120,6 +141,7 @@ while not glfw.window_should_close(window):
     sim_start = data.time
     while data.time - sim_start < 1.0 / 60.0:
         mujoco.mj_step(model, data)
+        
 
     mujoco.mjv_updateScene(model, data, opt, None, cam, mujoco.mjtCatBit.mjCAT_ALL, scene)
     width, height = glfw.get_framebuffer_size(window)

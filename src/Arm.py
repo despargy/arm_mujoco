@@ -8,7 +8,7 @@ class Arm:
         # Init variables
         self.q_desired = np.array([-0.75, -1.57, 1.57, -0.37, -2.45, -2.45])
         self.t_init = 3.0
-        self.kp = 15
+        self.kp = 15    
         self.freq = 2.0
         self.Ax, self.Ay, self.Az = 0.01, 0.01, 0.05
         self.dt = 0.002 #model.opt.timestep
@@ -32,6 +32,10 @@ class Arm:
         # Define indexing for qpos
         self.i_start_qpos = 0
         self.i_end_qpos = self.i_start_qpos + 6
+        
+        self.pc = np.zeros(3)
+        self.base_str = "base_ur5e"
+        self.base_body_id = 2
 
 
     def control_Cb(self, model, data):
@@ -79,3 +83,9 @@ class Arm:
 
             # Send general actuator commands - Listen as joint position...
             data.ctrl[self.i_start_ctrl:self.i_end_ctrl] = self.q_out
+            
+    def get_CoM_pos(self, data):
+        self.pc = data.xpos[self.base_body_id]
+        self.xquat = data.xquat[self.base_body_id] #w, x, y, z
+        
+        return self.pc, self.xquat
