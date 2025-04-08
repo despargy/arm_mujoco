@@ -308,6 +308,7 @@ class Perception:
 
         # Init tags if needed
         if self.NO_TAGS:
+            print("NO_TAGS: try to init them (if so)")
             self.init_tags(frame=rgb_bgr)
         
         # The next comment regards only the initial part
@@ -320,10 +321,11 @@ class Perception:
             # Serach for tags in this current frame
             tags_res = self.search_tags(frame=rgb_bgr)
             if (tags_res == 0):
-                
+
                 # This will terminate the loop, it forces the next Cb to init tags
                 self.NO_TAGS = True #oups, no tags found, let's go again
                 self.n_tags = 0
+                print("Oh I can see NO tags :( )")
                 return
             else:
                 # for each detected tags update corners
@@ -334,7 +336,7 @@ class Perception:
                 to_remove_ids = [id for id, tag in self.AllTagsDict.items() if not tag.VISIBLE]
                 for id in to_remove_ids:
                     del self.AllTagsDict[id]
-
+                print("My Perception is: \n", self.AllTagsDict)
             # take into account what if i have in the next frame extra tag that i have not detected until now
 
         # else:
