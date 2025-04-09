@@ -74,6 +74,7 @@
 
     <!-- ID=2 -->
     <texture name="apriltag_texture_2" type="2d" file="april_2.png" builtin="none"/>
+
     <material name="apriltag_material_2" texture="apriltag_texture_2"/>
 
     <!-- ID=3 -->
@@ -123,7 +124,7 @@
 
 
           <!-- ID=3 -->
-          <geom name="shoulder_apriltag_3" type="box" pos="0 -0.20 0" quat="0.707 0.707 0 0 " size="0.05 0.05 0.001" material="apriltag_material_3" rgba="1 1 1 1" contype="0" conaffinity="0"/>
+          <geom name="shoulder_apriltag_3" type="box" pos="0 -0.20 0" quat="0.707 0.707 0 0 " size="0.05 0.06 0.001" material="apriltag_material_3" rgba="1 1 1 1" contype="0" conaffinity="0"/>
 
 
           <geom mesh="upperarm_0" material="linkgray" class="visual_arm"/>
@@ -145,7 +146,7 @@
             <geom mesh="forearm_3" material="jointgray" class="visual_arm"/>
 
             <!-- ID=1 -->
-            <geom name="shoulder_apriltag_1" type="box" pos="0 -0.05 0.04" quat="0.707 0.707 0 0 " size="0.05 0.05 0.001" material="apriltag_material_1" rgba="1 1 1 1" contype="0" conaffinity="0"/>
+            <geom name="shoulder_apriltag_1" type="box" pos="0 -0.05 0.04" quat="0.707 0.707 0 0 " size="0.05 0.06 0.001" material="apriltag_material_1" rgba="1 1 1 1" contype="0" conaffinity="0"/>
 
             <geom class="collision_arm" pos="0 0.08 0" quat="1 1 0 0" size="0.055 0.06"/>
             <geom class="collision_arm" size="0.038 0.19" pos="0 0 0.2"/>
@@ -161,7 +162,9 @@
 
 
               <!-- ID=2 -->
-              <geom name="shoulder_apriltag_2" type="box" pos="0 -0.06 0" quat="0.707 0.707 0 0 " size="0.05 0.05 0.001" material="apriltag_material_2" rgba="1 1 1 1" contype="0" conaffinity="0"/>
+              <!-- <geom name="shoulder_apriltag_2" type="box" pos="0 -0.06 0" quat="0.707 0.707 0 0 " size="0.05 0.05 0.001" material="apriltag_material_2" rgba="1 1 1 1" contype="0" conaffinity="0"/> -->
+              <geom name="shoulder_apriltag_2" type="box" pos="0 -0.06 0" quat="0.5 0.5 -0.5 0.5 " size="0.05 0.06 0.001" material="apriltag_material_2" rgba="1 1 1 1" contype="0" conaffinity="0"/>
+
 
               <geom mesh="wrist1_1" material="urblue" class="visual_arm"/>
               <geom mesh="wrist1_2" material="jointgray" class="visual_arm"/>
@@ -191,7 +194,7 @@
                   <geom material="linkgray" mesh="wrist3" class="visual_arm"/>
 
                   <!-- ID=0 -->
-                  <geom name="shoulder_apriltag_0" type="box" pos="0 0 0.04" size="0.05 0.05 0.001" material="apriltag_material_0" rgba="1 1 1 1" contype="0" conaffinity="0"/>
+                  <geom name="shoulder_apriltag_0" type="box" pos="0 0 0.04" size="0.05 0.06 0.001" material="apriltag_material_0" rgba="1 1 1 1" contype="0" conaffinity="0"/>
 
                   <geom class="eef_collision" pos="0 0.08 0" quat="1 1 0 0" size="0.04 0.02"/>
                   <site name="attachment_site" pos="0 0.1 0" quat="-1 1 0 0"/>

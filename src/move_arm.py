@@ -96,23 +96,25 @@ glfw.set_scroll_callback(window, scroll_callback)
 mujoco.mj_forward(model,data)
 
 arm_pos_quat, _ = arm.get_CoM_pos(data)
-init_config = generator.generate_config(arm_pos_quat=arm_pos_quat)
+# init_config = generator.generate_config(arm_pos_quat=arm_pos_quat)
 
-robot_go2.set_CoM_pos(data,config=init_config)
+# robot_go2.set_CoM_pos(data,config=init_config)
 
 
 mujoco.mj_forward(model,data)
 
-
+t_last = 0.0
 # ========== Control Logic ==========
 def my_controller(model, data):
-    
+    global t_last
     # Cb for arms periodic motion
     arm.control_Cb(model=model, data=data)
     
     # Tracking detected edges of arm
     # perception.get_rgbd_auto_AOI(model, data)
-    perception.Cb_DnT(model=model, data=data)
+    if (data.time - t_last > 0.034): #fps(30)
+        t_last = data.time
+        perception.Cb_DnT(model=model, data=data)
 
     #Print joint mapping
     # for i in range(model.njnt):
