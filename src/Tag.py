@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from shapely.geometry import Polygon
 
 class Tag:
     def __init__(self, id, corners, VISIBLE):
@@ -8,10 +9,13 @@ class Tag:
         self.p2 = None
         self.p3 = None
         self.p4 = None
+        self.confidence = 0
+        self.centroid = np.zeros(2).astype(int)
+
         self.corners = corners
+        # This update corner, confidence, centroid
         self.update_corners(corners=corners)
         self.VISIBLE = VISIBLE
-        self.confidence = 0
 
     def update_corners(self, corners):
         self.corners = corners
@@ -21,6 +25,7 @@ class Tag:
         self.p4 = corners[3]
         self.update_confidence()
         # self.confidence_cross_check = self.quad_area()
+        self.update_centroid()
         
 
     def update_confidence(self):
@@ -29,6 +34,10 @@ class Tag:
         y = self.corners[:, 1]
         self.confidence = 0.5 * np.abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
 
+    def update_centroid(self):
+        polygon = Polygon([self.p1, self.p2, self.p3, self.p4])
+        self.centroid[0] = polygon.centroid.x
+        self.centroid[1] = polygon.centroid.y
 
     def triangle_area(self, p1, p2, p3):
         return 0.5 * abs(

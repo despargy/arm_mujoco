@@ -3,6 +3,25 @@ import mujoco
 import numpy as np
 from Tag import Tag
 from dt_apriltags import Detector
+from shapely.geometry import Polygon
+from math import atan2
+
+
+def order_clockwise(points):
+    # Step 1: Calculate the centroid (mean of the points)
+    centroid = np.mean(points, axis=0)
+    
+    # Step 2: Calculate the polar angle of each point relative to the centroid
+    def polar_angle(point):
+        return atan2(point[1] - centroid[1], point[0] - centroid[0])
+    
+    # Step 3: Sort points based on the angle in counter-clockwise direction
+    sorted_points = sorted(points, key=polar_angle)
+    
+    # Step 4: Reverse the sorted points to get the clockwise order
+    sorted_points.reverse()
+
+    return sorted_points
 
 class Perception:
     def __init__(self, height=480, width=640):
@@ -33,6 +52,10 @@ class Perception:
         self.AllTagsDict = {}
         self.NO_TAGS = True
         self.n_tags = 0
+        
+        self.area_btw_tags = 0.0
+        self.coords = []
+
 
     def get_rgbd(self, model: mujoco.MjModel, data: mujoco.MjData, context: mujoco.MjrContext):
         
@@ -255,6 +278,7 @@ class Perception:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         tags = self.at_detector.detect(gray, False, camera_params=None, tag_size = None)
         self.AllTagsDict = {}
+        self.n_tags = 0
         if tags is not None:
 
             # Store how many tags we assign
@@ -337,6 +361,18 @@ class Perception:
                 # print("My Perception is: \n", self.AllTagsDict)
                 print("n_tags = ", self.n_tags)
 
+            # Centroids if more than 2 tags
+            if (self.n_tags < 3):
+                self.area_btw_tags = 0.0
+            else:
+                points = []
+                for id,tag in self.AllTagsDict.items():
+                    points.append(tag.centroid)
+
+                self.coords = order_clockwise(points)
+                poly = Polygon(self.coords)
+                self.area_btw_tags = poly.area
+
         annotated_frame = frame.copy()
         for id, tag in self.AllTagsDict.items():
 
@@ -349,6 +385,18 @@ class Perception:
             cv2.circle(annotated_frame, tuple(tag.corners[1].astype(int)), radius=5, color=(0, 0, 255), thickness=-1)  # red dot
             cv2.circle(annotated_frame, tuple(tag.corners[2].astype(int)), radius=5, color=(0, 0, 255), thickness=-1)  # red dot
             cv2.circle(annotated_frame, tuple(tag.corners[3].astype(int)), radius=5, color=(0, 0, 255), thickness=-1)  # red dot
+        
+
+        print(self.area_btw_tags)
+
+        if not (len(self.coords) == 0): 
+            pts = np.array(self.coords, dtype=np.int32)
+            pts = pts.reshape((-1, 1, 2))
+
+            cv2.polylines(annotated_frame, [pts], isClosed=True, color=(0, 255, 0), thickness=2)
+
+            
+        
         cv2.imshow('Annotated Frame', annotated_frame)
 
         
@@ -391,11 +439,11 @@ class Perception:
                 # for each detected tags update corners
                 for tag in tags_res:
                     if tag.tag_id in self.AllTagsDict:
-                        print("See a detected tag again: id = ", tag.tag_id)
+                        # print("See a detected tag again: id = ", tag.tag_id)
                         self.AllTagsDict[tag.tag_id].update_corners(corners=tag.corners)
                         self.AllTagsDict[tag.tag_id].VISIBLE = True
                     else:
-                        print("New detected tag: id = ", tag.tag_id)
+                        # print("New detected tag: id = ", tag.tag_id)
                         self.add_tag(tag.tag_id, tag.corners, True)
 
                 to_remove_ids = [id for id, tag in self.AllTagsDict.items() if not tag.VISIBLE]
@@ -404,5 +452,19 @@ class Perception:
                 self.n_tags = len(self.AllTagsDict)
                 print("My Perception is: \n", self.AllTagsDict)
                 print("n_tags = \n", self.n_tags)
+
+            # Centroids if more than 2 tags
+            if (self.n_tags < 3):
+                self.area_btw_tags = 0.0
+            else:
+                points = []
+                for id,tag in self.AllTagsDict.items():
+                    points.append(tag.centroid)
+
+                self.coords = order_clockwise(points)
+                poly = Polygon(self.coords)
+                self.area_btw_tags = poly.area
+
+
 
 

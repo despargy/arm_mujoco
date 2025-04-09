@@ -40,13 +40,27 @@ while True:
         cv.circle(annotated_frame, tuple(tag.corners[1].astype(int)), radius=5, color=(0, 0, 255), thickness=-1)  # red dot
         cv.circle(annotated_frame, tuple(tag.corners[2].astype(int)), radius=5, color=(0, 0, 255), thickness=-1)  # red dot
         cv.circle(annotated_frame, tuple(tag.corners[3].astype(int)), radius=5, color=(0, 0, 255), thickness=-1)  # red dot
-        print("Confidence = ",tag.confidence)
 
         # print(annotated_frame.shape)
-        # print("Shape corners", tag.p1)
-        # print("Shape corners", tag.p2)
-        # print("Shape corners", tag.p3)
-        # print("Shape corners", tag.p4)
+        print("Shape corners", tag.p1)
+        print("Shape corners", tag.p2)
+        print("Shape corners", tag.p3)
+        print("Shape corners", tag.p4)
+        # print("Confidence = ",tag.confidence)
+        print("Centroid = ",tag.centroid)
+
+
+        cv.circle(annotated_frame, tuple(tag.centroid), radius=5, color=(0, 255, 0), thickness=-1)  # red dot
+
+    print(perception.area_btw_tags)
+
+    if not (len(perception.coords) == 0): 
+        pts = np.array(perception.coords, dtype=np.int32)
+        pts = pts.reshape((-1, 1, 2))
+
+        cv.polylines(annotated_frame, [pts], isClosed=True, color=(0, 255, 0), thickness=2)
+        # cv.fillPoly(annotated_frame, pts, color=(0, 100, 255))  # Transparent effect not supported here
+
 
     if (perception.n_tags == 0):
         annotated_frame = frame.copy()
