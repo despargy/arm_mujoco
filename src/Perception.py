@@ -2,7 +2,7 @@ import cv2
 import mujoco
 import numpy as np
 from Tag import Tag
-from dt_apriltags import Detector
+# from dt_apriltags import Detector
 
 class Perception:
     def __init__(self, height=480, width=640):
@@ -23,13 +23,13 @@ class Perception:
         self.canvas = None
 
         # Tags releated
-        self.at_detector = Detector(families='tag36h11',
-                       nthreads=1,
-                       quad_decimate=1.0,
-                       quad_sigma=0.0,
-                       refine_edges=1,
-                       decode_sharpening=0.25,
-                       debug=0)
+        # self.at_detector = Detector(families='tag36h11',
+        #                nthreads=1,
+        #                quad_decimate=1.0,
+        #                quad_sigma=0.0,
+        #                refine_edges=1,
+        #                decode_sharpening=0.25,
+        #                debug=0)
         self.AllTagsDict = {}
         self.NO_TAGS = True
         self.n_tags = 0
