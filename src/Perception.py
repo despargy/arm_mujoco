@@ -254,7 +254,7 @@ class Perception:
         # Convert frame to gray
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         tags = self.at_detector.detect(gray, False, camera_params=None, tag_size = None)
-        
+        self.AllTagsDict = {}
         if tags is not None:
 
             # Store how many tags we assign
@@ -269,7 +269,7 @@ class Perception:
             else:
                 self.NO_TAGS = False
                 # Reset tags
-                self.Dict_tag = {}
+                # self.AllTagsDict = {}
                 # Per detected tag - constr. an object
                 for tag in tags:
                     self.add_tag(tag.tag_id, tag.corners, True)
