@@ -83,6 +83,7 @@ class Arm:
 
             # Send general actuator commands - Listen as joint position...
             data.ctrl[self.i_start_ctrl:self.i_end_ctrl] = self.q_out
+            data.ctrl[5]= 1.5
             
     def get_CoM_pos(self, data):
         self.pc = data.xpos[self.base_body_id]

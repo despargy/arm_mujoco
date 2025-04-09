@@ -101,7 +101,6 @@ init_config = generator.generate_config(arm_pos_quat=arm_pos_quat)
 robot_go2.set_CoM_pos(data,config=init_config)
 
 
-
 # mujoco.mj_forward(model,data)
 
 
