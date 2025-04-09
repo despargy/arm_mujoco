@@ -40,12 +40,13 @@ while True:
         cv.circle(annotated_frame, tuple(tag.corners[1].astype(int)), radius=5, color=(0, 0, 255), thickness=-1)  # red dot
         cv.circle(annotated_frame, tuple(tag.corners[2].astype(int)), radius=5, color=(0, 0, 255), thickness=-1)  # red dot
         cv.circle(annotated_frame, tuple(tag.corners[3].astype(int)), radius=5, color=(0, 0, 255), thickness=-1)  # red dot
+        print("Confidence = ",tag.confidence)
 
-        print(annotated_frame.shape)
-        print("Shape corners", tag.p1)
-        print("Shape corners", tag.p2)
-        print("Shape corners", tag.p3)
-        print("Shape corners", tag.p4)
+        # print(annotated_frame.shape)
+        # print("Shape corners", tag.p1)
+        # print("Shape corners", tag.p2)
+        # print("Shape corners", tag.p3)
+        # print("Shape corners", tag.p4)
 
     if (perception.n_tags == 0):
         annotated_frame = frame.copy()

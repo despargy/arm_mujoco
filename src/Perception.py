@@ -274,6 +274,7 @@ class Perception:
                 for tag in tags:
                     self.add_tag(tag.tag_id, tag.corners, True)
 
+
     def add_tag(self, tag_id, corners, flags_to_update):
         self.AllTagsDict[tag_id] = Tag(id=tag_id, corners=corners, VISIBLE=flags_to_update)
 
