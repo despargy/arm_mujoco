@@ -111,7 +111,8 @@ def my_controller(model, data):
     arm.control_Cb(model=model, data=data)
     
     # Tracking detected edges of arm
-    perception.get_rgbd_auto_AOI(model, data)
+    # perception.get_rgbd_auto_AOI(model, data)
+    perception.Cb_DnT(model=model, data=data)
 
     #Print joint mapping
     # for i in range(model.njnt):
