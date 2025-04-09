@@ -47,6 +47,10 @@ while True:
         print("Shape corners", tag.p3)
         print("Shape corners", tag.p4)
 
+    if (perception.n_tags == 0):
+        annotated_frame = frame.copy()
+        print("Believe:", perception.AllTagsDict)
+
     # Display the resulting frame
     cv.imshow('Actual Camera', frame)
     cv.imshow('Annotated Frame', annotated_frame)

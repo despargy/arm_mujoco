@@ -95,13 +95,13 @@ glfw.set_scroll_callback(window, scroll_callback)
 # Update arm pos
 mujoco.mj_forward(model,data)
 
-arm_pos_quat, _ = arm.get_CoM_pos(data)
+# arm_pos_quat, _ = arm.get_CoM_pos(data)
 # init_config = generator.generate_config(arm_pos_quat=arm_pos_quat)
 
 # robot_go2.set_CoM_pos(data,config=init_config)
 
 
-mujoco.mj_forward(model,data)
+# mujoco.mj_forward(model,data)
 
 t_last = 0.0
 # ========== Control Logic ==========
