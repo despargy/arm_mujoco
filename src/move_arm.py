@@ -114,7 +114,9 @@ def my_controller(model, data):
     # perception.get_rgbd_auto_AOI(model, data)
     if (data.time - t_last > 0.034): #fps(30)
         t_last = data.time
-        perception.Cb_DnT(model=model, data=data)
+        rgb, _ = perception._render_camera_view(model, data, perception.perception_context)
+
+        perception.Cb_DnT(frame=rgb)
 
     #Print joint mapping
     # for i in range(model.njnt):

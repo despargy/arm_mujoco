@@ -279,10 +279,10 @@ class Perception:
         self.AllTagsDict[tag_id] = Tag(id=tag_id, corners=corners, VISIBLE=flags_to_update)
 
     # Cb for Detect and Tracking
-    def Cb_DnT(self, model: mujoco.MjModel, data: mujoco.MjData):
+    def Cb_DnT(self, frame):
         # Render
-        rgb, _ = self._render_camera_view(model, data, self.perception_context)
-        
+        # rgb, _ = self._render_camera_view(model, data, self.perception_context)
+        rgb = frame
         # Process images
         rgb_bgr = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
         rgb_bgr1 = cv2.rotate(rgb_bgr, cv2.ROTATE_90_COUNTERCLOCKWISE) 
@@ -291,11 +291,11 @@ class Perception:
 
         frame = rgb_bgr2
         # Wait 1.0sec to work with perception things
-        current_time = data.time
-        if not hasattr(self, 'start_time'):
-            self.start_time = current_time
-        if current_time - self.start_time < 1.0:
-            return
+        # current_time = data.time
+        # if not hasattr(self, 'start_time'):
+        #     self.start_time = current_time
+        # if current_time - self.start_time < 1.0:
+        #     return
 
         # Init tags if needed
         if self.NO_TAGS:
