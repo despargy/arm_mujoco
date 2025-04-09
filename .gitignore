@@ -1,3 +1,4 @@
 .vscode/
 /src/cmake/build/
 /src/__pycache__
+/src/data.csv
