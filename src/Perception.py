@@ -231,18 +231,6 @@ class Perception:
         self.old_gray = depth_gray.copy()
         self.edges = good_new.reshape(-1, 1, 2)
 
-
-    # def perceive_all(self, model, data):
-    #     if self.RE_INIT_TAG:
-    #         print("I will init tag 'id' - call apriltag")
-    #         # Set detected tags cordinates
-    #         # give those coord. in Tags 3
-    #     else:
-    #         #keep tracking
-    #         pass
-
-
-
     def search_tags(self, frame):
         # Convert frame to gray
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -252,12 +240,13 @@ class Perception:
 
             # If no tags is found
             if (len(tags) ==0):
-                print(len(tags))
+                print("After search found = ",len(tags))
                 self.NO_TAGS = True
                 return 0
             
             # Return what you found
             else:
+                print("After search found = ",len(tags))
                 return tags
 
     def init_tags(self, frame):
@@ -270,6 +259,7 @@ class Perception:
 
             # Store how many tags we assign
             self.n_tags = len(tags)
+            print("From init: found = ", self.n_tags)
 
             # If 0 tags was found
             if (self.n_tags==0):
@@ -282,12 +272,10 @@ class Perception:
                 self.Dict_tag = {}
                 # Per detected tag - constr. an object
                 for tag in tags:
-                    self.add_tag(self, tag.tag_id, tag.corners, True)
+                    self.add_tag(tag.tag_id, tag.corners, True)
 
     def add_tag(self, tag_id, corners, flags_to_update):
         self.AllTagsDict[tag_id] = Tag(id=tag_id, corners=corners, VISIBLE=flags_to_update)
-
-
 
     # Cb for Detect and Tracking
     def Cb_DnT(self, model: mujoco.MjModel, data: mujoco.MjData):
@@ -296,9 +284,11 @@ class Perception:
         
         # Process images
         rgb_bgr = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
-        rgb_bgr = cv2.rotate(rgb_bgr, cv2.ROTATE_90_COUNTERCLOCKWISE) 
-        depth_gray = cv2.cvtColor(rgb_bgr, cv2.COLOR_BGR2GRAY)
+        rgb_bgr1 = cv2.rotate(rgb_bgr, cv2.ROTATE_90_COUNTERCLOCKWISE) 
+        rgb_bgr2 = cv2.flip(rgb_bgr1, 1)
+        # depth_gray = cv2.cvtColor(rgb_bgr, cv2.COLOR_BGR2GRAY)
 
+        frame = rgb_bgr2
         # Wait 1.0sec to work with perception things
         current_time = data.time
         if not hasattr(self, 'start_time'):
@@ -309,17 +299,18 @@ class Perception:
         # Init tags if needed
         if self.NO_TAGS:
             print("NO_TAGS: try to init them (if so)")
-            self.init_tags(frame=rgb_bgr)
+            self.init_tags(frame=frame)
         
         # The next comment regards only the initial part
         # Since at least 1 tag is found (self.NO_TAGS has became False, so not ok) -> perceive, from previous
         if not self.NO_TAGS:
+            print("Ready to search for tags:")
             # Reset flag as for now i have not seen anything
             # Control from VISIBLE flag, if those are detected again in the current frame
-            for t in self.AllTagsDict():
+            for id, t in self.AllTagsDict.items():
                 t.VISIBLE = False
             # Serach for tags in this current frame
-            tags_res = self.search_tags(frame=rgb_bgr)
+            tags_res = self.search_tags(frame=frame)
             if (tags_res == 0):
 
                 # This will terminate the loop, it forces the next Cb to init tags
@@ -331,15 +322,86 @@ class Perception:
                 # for each detected tags update corners
                 for tag in tags_res:
                     if tag.tag_id in self.AllTagsDict:
+                        print("See a detected tag again: id = ", tag.tag_id)
                         self.AllTagsDict[tag.tag_id].update_corners(corners=tag.corners)
                         self.AllTagsDict[tag.tag_id].VISIBLE = True
+                    else:
+                        print("New detected tag: id = ", tag.tag_id)
+                        self.add_tag(tag.tag_id, tag.corners, True)
+
                 to_remove_ids = [id for id, tag in self.AllTagsDict.items() if not tag.VISIBLE]
                 for id in to_remove_ids:
                     del self.AllTagsDict[id]
+                self.n_tags = len(self.AllTagsDict)
                 print("My Perception is: \n", self.AllTagsDict)
-            # take into account what if i have in the next frame extra tag that i have not detected until now
+                print("n_tags = \n", self.n_tags)
 
-        # else:
-        #     print("To tags - I will try again")
-        #     # If n_tags == 0 go back and retry in the other loop
-        #     return
+        annotated_frame = frame.copy()
+        for id, tag in self.AllTagsDict.items():
+
+            for idx in range(len(tag.corners)):
+                cv2.line(annotated_frame, tuple(tag.corners[idx-1, :].astype(int)), tuple(tag.corners[idx, :].astype(int)), (0, 0, 255))
+
+            # cv.circle(annotated_frame, p1, radius=5, color=(0, 0, 255), thickness=-1)  # red dot
+
+            cv2.circle(annotated_frame, tuple(tag.corners[0].astype(int)), radius=5, color=(0, 0, 255), thickness=-1)  # red dot
+            cv2.circle(annotated_frame, tuple(tag.corners[1].astype(int)), radius=5, color=(0, 0, 255), thickness=-1)  # red dot
+            cv2.circle(annotated_frame, tuple(tag.corners[2].astype(int)), radius=5, color=(0, 0, 255), thickness=-1)  # red dot
+            cv2.circle(annotated_frame, tuple(tag.corners[3].astype(int)), radius=5, color=(0, 0, 255), thickness=-1)  # red dot
+        cv2.imshow('Annotated Frame', annotated_frame)
+
+        
+        # result = cv2.add(result, self.Rectangle)
+        # cv2.imshow("annotated_frame", annotated_frame)
+        # cv2.waitKey(1)
+
+
+
+
+    # Cb for Detect and Tracking
+    def Cb_DnT_realcamera(self, frame):
+        # Render
+        rgb = frame
+
+        # Init tags if needed
+        if self.NO_TAGS:
+            print("NO_TAGS: try to init them (if so)")
+            self.init_tags(frame=rgb)
+
+        
+        # The next comment regards only the initial part
+        # Since at least 1 tag is found (self.NO_TAGS has became False, so not ok) -> perceive, from previous
+        if not self.NO_TAGS:
+            print("Ready to search for tags:")
+            # Reset flag as for now i have not seen anything
+            # Control from VISIBLE flag, if those are detected again in the current frame
+            for id, t in self.AllTagsDict.items():
+                t.VISIBLE = False
+            # Serach for tags in this current frame
+            tags_res = self.search_tags(frame=rgb)
+            if (tags_res == 0):
+
+                # This will terminate the loop, it forces the next Cb to init tags
+                self.NO_TAGS = True #oups, no tags found, let's go again
+                self.n_tags = 0
+                print("Oh I can see NO tags :( )")
+                return
+            else:
+                # for each detected tags update corners
+                for tag in tags_res:
+                    if tag.tag_id in self.AllTagsDict:
+                        print("See a detected tag again: id = ", tag.tag_id)
+                        self.AllTagsDict[tag.tag_id].update_corners(corners=tag.corners)
+                        self.AllTagsDict[tag.tag_id].VISIBLE = True
+                    else:
+                        print("New detected tag: id = ", tag.tag_id)
+                        self.add_tag(tag.tag_id, tag.corners, True)
+
+                to_remove_ids = [id for id, tag in self.AllTagsDict.items() if not tag.VISIBLE]
+                for id in to_remove_ids:
+                    del self.AllTagsDict[id]
+                self.n_tags = len(self.AllTagsDict)
+                print("My Perception is: \n", self.AllTagsDict)
+                print("n_tags = \n", self.n_tags)
+
+

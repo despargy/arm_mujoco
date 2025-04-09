@@ -101,7 +101,7 @@ init_config = generator.generate_config(arm_pos_quat=arm_pos_quat)
 robot_go2.set_CoM_pos(data,config=init_config)
 
 
-# mujoco.mj_forward(model,data)
+mujoco.mj_forward(model,data)
 
 
 # ========== Control Logic ==========
@@ -127,6 +127,7 @@ def my_controller(model, data):
     # print(robot_go2.get_CoM_pos(data=data))
     
     #Check generator position
+
 
     csv_writer.writerow([
         data.time,
@@ -155,7 +156,9 @@ while not glfw.window_should_close(window):
 
     glfw.swap_buffers(window)
     glfw.poll_events()
-
+    
+    if cv2.waitKey(1) == ord('q'):
+        break
 # ========== Cleanup ==========
 csv_file.close()
 glfw.terminate()
