@@ -240,13 +240,13 @@ class Perception:
 
             # If no tags is found
             if (len(tags) ==0):
-                print("After search found = ",len(tags))
+                # print("After search found = ",len(tags))
                 self.NO_TAGS = True
                 return 0
             
             # Return what you found
             else:
-                print("After search found = ",len(tags))
+                # print("After search found = ",len(tags))
                 return tags
 
     def init_tags(self, frame):
@@ -305,7 +305,7 @@ class Perception:
         # The next comment regards only the initial part
         # Since at least 1 tag is found (self.NO_TAGS has became False, so not ok) -> perceive, from previous
         if not self.NO_TAGS:
-            print("Ready to search for tags:")
+            # print("Ready to search for tags:")
             # Reset flag as for now i have not seen anything
             # Control from VISIBLE flag, if those are detected again in the current frame
             for id, t in self.AllTagsDict.items():
@@ -317,25 +317,25 @@ class Perception:
                 # This will terminate the loop, it forces the next Cb to init tags
                 self.NO_TAGS = True #oups, no tags found, let's go again
                 self.n_tags = 0
-                print("Oh I can see NO tags :( )")
+                # print("Oh I can see NO tags :( )")
                 return
             else:
                 # for each detected tags update corners
                 for tag in tags_res:
                     if tag.tag_id in self.AllTagsDict:
-                        print("See a detected tag again: id = ", tag.tag_id)
+                        # print("See a detected tag again: id = ", tag.tag_id)
                         self.AllTagsDict[tag.tag_id].update_corners(corners=tag.corners)
                         self.AllTagsDict[tag.tag_id].VISIBLE = True
                     else:
-                        print("New detected tag: id = ", tag.tag_id)
+                        # print("New detected tag: id = ", tag.tag_id)
                         self.add_tag(tag.tag_id, tag.corners, True)
 
                 to_remove_ids = [id for id, tag in self.AllTagsDict.items() if not tag.VISIBLE]
                 for id in to_remove_ids:
                     del self.AllTagsDict[id]
                 self.n_tags = len(self.AllTagsDict)
-                print("My Perception is: \n", self.AllTagsDict)
-                print("n_tags = \n", self.n_tags)
+                # print("My Perception is: \n", self.AllTagsDict)
+                print("n_tags = ", self.n_tags)
 
         annotated_frame = frame.copy()
         for id, tag in self.AllTagsDict.items():
