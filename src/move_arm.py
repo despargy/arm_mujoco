@@ -112,6 +112,7 @@ def my_controller(model, data):
     
     # Tracking detected edges of arm
     # perception.get_rgbd_auto_AOI(model, data)
+    perception.get_rgbd(model, data, perception.perception_context)
     if (data.time - t_last > 0.034): #fps(30)
         t_last = data.time
         rgb, _ = perception._render_camera_view(model, data, perception.perception_context)

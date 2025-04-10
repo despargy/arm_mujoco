@@ -105,12 +105,18 @@ class Perception:
         rgb_bgr = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
 
         # Optional rotation
-        rgb_bgr = cv2.rotate(rgb_bgr, cv2.ROTATE_90_COUNTERCLOCKWISE)
-        depth_gray = cv2.rotate(depth_gray, cv2.ROTATE_90_COUNTERCLOCKWISE)
+        # rgb_bgr = cv2.rotate(rgb_bgr, cv2.ROTATE_90_COUNTERCLOCKWISE)
+        # depth_gray = cv2.rotate(depth_gray, cv2.ROTATE_90_COUNTERCLOCKWISE)
+
+        rgb_bgr1 = cv2.rotate(rgb_bgr, cv2.ROTATE_90_COUNTERCLOCKWISE) 
+        rgb_bgr2 = cv2.flip(rgb_bgr1, 1)
+
+        depth_gray1 = cv2.rotate(depth_gray, cv2.ROTATE_90_COUNTERCLOCKWISE) 
+        depth_gray2 = cv2.flip(depth_gray1, 1)
 
         # Display in separate OpenCV windows
-        cv2.imshow("RGB Camera View", rgb_bgr)
-        cv2.imshow("Depth Map (Grayscale)", depth_gray)
+        cv2.imshow("RGB Camera View", rgb_bgr2)
+        cv2.imshow("Depth Map (Grayscale)", depth_gray2)
         cv2.waitKey(1)
         
     def _render_camera_view(self, model: mujoco.MjModel, data: mujoco.MjData, context: mujoco.MjrContext):
