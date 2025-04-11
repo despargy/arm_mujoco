@@ -5,7 +5,8 @@ from Tag import Tag
 from dt_apriltags import Detector
 from shapely.geometry import Polygon
 from math import atan2
-
+from collections import deque
+from scipy.stats import skew
 
 def order_clockwise(points):
     # Step 1: Calculate the centroid (mean of the points)
@@ -55,7 +56,7 @@ class Perception:
         
         self.area_btw_tags = 0.0
         self.coords = []
-
+        self.depth = None
 
     def get_rgbd(self, model: mujoco.MjModel, data: mujoco.MjData, context: mujoco.MjrContext):
         
@@ -109,15 +110,15 @@ class Perception:
         # depth_gray = cv2.rotate(depth_gray, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
         rgb_bgr1 = cv2.rotate(rgb_bgr, cv2.ROTATE_90_COUNTERCLOCKWISE) 
-        rgb_bgr2 = cv2.flip(rgb_bgr1, 1)
+        self.rgb = cv2.flip(rgb_bgr1, 1)
 
         depth_gray1 = cv2.rotate(depth_gray, cv2.ROTATE_90_COUNTERCLOCKWISE) 
-        depth_gray2 = cv2.flip(depth_gray1, 1)
+        self.depth = cv2.flip(depth_gray1, 1)
 
         # Display in separate OpenCV windows
-        cv2.imshow("RGB Camera View", rgb_bgr2)
-        cv2.imshow("Depth Map (Grayscale)", depth_gray2)
-        cv2.waitKey(1)
+        # cv2.imshow("RGB Camera View", self.rgb)
+        # cv2.imshow("Depth Map (Grayscale)", self.depth)
+        # cv2.waitKey(1)
         
     def _render_camera_view(self, model: mujoco.MjModel, data: mujoco.MjData, context: mujoco.MjrContext):
         
@@ -391,7 +392,8 @@ class Perception:
             cv2.circle(annotated_frame, tuple(tag.corners[1].astype(int)), radius=5, color=(0, 0, 255), thickness=-1)  # red dot
             cv2.circle(annotated_frame, tuple(tag.corners[2].astype(int)), radius=5, color=(0, 0, 255), thickness=-1)  # red dot
             cv2.circle(annotated_frame, tuple(tag.corners[3].astype(int)), radius=5, color=(0, 0, 255), thickness=-1)  # red dot
-        
+
+
 
         print(self.area_btw_tags)
 
@@ -402,16 +404,12 @@ class Perception:
             cv2.polylines(annotated_frame, [pts], isClosed=True, color=(0, 255, 0), thickness=2)
 
             
-        
         cv2.imshow('Annotated Frame', annotated_frame)
 
         
         # result = cv2.add(result, self.Rectangle)
         # cv2.imshow("annotated_frame", annotated_frame)
         # cv2.waitKey(1)
-
-
-
 
     # Cb for Detect and Tracking
     def Cb_DnT_realcamera(self, frame):
@@ -471,6 +469,91 @@ class Perception:
                 poly = Polygon(self.coords)
                 self.area_btw_tags = poly.area
 
+    def segment_occlusions(self, depth):
+
+        H, W = depth.shape
+        # Sobel for edges
+        grad_edges = cv2.Sobel(depth, cv2.CV_64F, 1, 0, ksize=3)
+
+        # If needed: identify the regions with strong edges - vertical
+        vertical_edges = np.abs(grad_edges) > np.percentile(np.abs(grad_edges), 10)  
+
+        # Find the closest vertical component
+        closest_pixel = None
+        closest_depth = np.inf
+
+        for y in range(H):
+            for x in range(W):
+                if vertical_edges[y, x]:
+                    depth_value = depth[y, x]
+                    if depth_value < closest_depth:
+                        closest_depth = depth_value
+                        closest_pixel = (x, y)
+
+        # Binary mask based on the vertical edges
+        binary_mask = vertical_edges.astype(np.uint8) * 255
+        # kernel = np.ones((3,3), np.uint8)  
+        # cleaned_mask = cv2.morphologyEx(binary_mask, cv2.MORPH_CLOSE, kernel)
+
+        # Find contours on the binary mask
+        contours, _ = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        # If contours are found, process them
+        if contours:
+            # Get the largest contour (this should correspond to the occlusion)
+            largest_contour = max(contours, key=cv2.contourArea)
+
+            # Get the bounding box of the largest contour
+            x, y, w, h = cv2.boundingRect(largest_contour)
+
+            # Vizualize results
+            cv2.rectangle(depth, (x, y), (x + w, y + h), (0, 255, 0), 2) 
+            cv2.drawContours(depth, [largest_contour], -1, (0, 255, 0), thickness=cv2.FILLED)  
+            
+        # Display the result
+        if closest_pixel:
+            x, y = closest_pixel
+            cv2.circle(depth, (x, y), 5, (0, 0, 255), -1)  # Mark the closest vertical component with a red dot
+        
+            # # Store them
+        self.contour_x1 = x
+        self.contour_y1 = y
+        self.contour_x2 = x + w
+        self.contour_y2 = y + h
+
+        # Show the depth image with the bounding box around the occlusion
+        cv2.imshow("Segmented Occlusion", depth)
+        cv2.waitKey(1)
 
 
+        ######### OPTION 2 ################
+        # H, W = depth.shape
+        # # # Sobel for edges
+        # grad_edges = cv2.Sobel(depth, cv2.CV_64F, 1, 0, ksize=3)
+
+        # # # Identify the regions with strong vertical edges
+        # vertical_edges = np.abs(grad_edges) > 10  # Set a fixed threshold instead of using percentiles
+
+        # # Apply morphological transformations to separate objects if needed
+        # kernel = np.ones((5,5), np.uint8)  # Larger kernel size for separation
+        # cleaned_mask = cv2.morphologyEx(vertical_edges.astype(np.uint8), cv2.MORPH_CLOSE, kernel)
+
+        # # Find contours on the binary mask
+        # contours, _ = cv2.findContours(cleaned_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        # # If contours are found, process them
+        # if contours:
+        #     for contour in contours:
+        #         # Get the bounding box of each contour
+        #         x, y, w, h = cv2.boundingRect(contour)
+
+        #         # Only process contours that are large enough (filter out small noise)
+        #         if cv2.contourArea(contour) > 1000:  # Adjust the minimum area threshold as needed
+        #             # Draw the bounding box on the depth image
+        #             cv2.rectangle(depth, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Green bounding box
+        #             cv2.drawContours(depth, [contour], -1, (0, 255, 0), thickness=cv2.FILLED)  # Fill the occlusion area
+
+        # # Show the depth image with the bounding box around the occlusion
+        # cv2.imshow("Segmented Occlusion", depth)
+        # cv2.waitKey(1)
 

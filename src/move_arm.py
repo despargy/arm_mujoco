@@ -7,6 +7,7 @@ from Arm import Arm
 from Robot import RobotGo2
 from Perception import Perception
 from ConfigurationGenerator import ConfigGenerator
+import time
 
 # ========== Paths ==========
 XML_PATH = "../xml/scene.xml"
@@ -112,11 +113,16 @@ def my_controller(model, data):
     
     # Tracking detected edges of arm
     # perception.get_rgbd_auto_AOI(model, data)
+
+    # Get new rgb-d image
     perception.get_rgbd(model, data, perception.perception_context)
+    # Segment occlusions
+    # perception.segment_occlusions(perception.depth)  # Original version
+
     if (data.time - t_last > 0.034): #fps(30)
         t_last = data.time
+    
         rgb, _ = perception._render_camera_view(model, data, perception.perception_context)
-
         perception.Cb_DnT(frame=rgb)
 
     #Print joint mapping
@@ -131,9 +137,6 @@ def my_controller(model, data):
     # Check Go2 pos of robot
     # print(robot_go2.get_CoM_pos(data=data))
     
-    #Check generator position
-
-
     csv_writer.writerow([
         data.time,
         arm.ep[0], arm.ep[1], arm.ep[2],
