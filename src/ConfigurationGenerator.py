@@ -22,13 +22,15 @@ class ConfigGenerator:
 
         # Sample a random radius uniformly in area between the inner and outer radius.
         r = np.sqrt(np.random.uniform(self.inner_radius**2, self.outer_radius**2))
-        theta = np.random.uniform(0, 2 * np.pi)
+        theta = np.random.uniform(0, np.pi)
         print("r",r)
 
         pos_x = self.arm_position[0] + r * np.cos(theta)
         pos_y = self.arm_position[1] + r * np.sin(theta)
-        yaw = np.random.uniform(-np.pi, np.pi)
+        yaw = np.arctan2(pos_y, pos_x)
+        
+        # yaw = np.random.uniform(-np.pi, np.pi)
 
         # Create and return the configuration dictionary.
-        return {"robot": {"x": pos_x, "y": pos_y, "yaw": yaw}}
+        return {"robot": {"x": pos_x, "y": pos_y, "yaw": np.pi + yaw},}
 
