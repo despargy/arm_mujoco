@@ -6,7 +6,10 @@ class Arm:
     def __init__(self):
 
         # Init variables
-        self.q_desired = np.array([-0.75, -1.57, 1.57, -0.37, -2.45, -2.45])
+        # self.q_desired = np.array([-0.75, -1.57, 1.57, -0.37, -2.45, -2.45])
+        self.q_desired = np.array([+1.25, -1.57, 1.57, -0.37, -2.45, -2.45]) #TODO
+        
+        
         self.t_init = 3.0
         self.kp = 15    
         self.freq = 2.0
@@ -46,6 +49,11 @@ class Arm:
         if self.ee_body_id == -1:
             raise  ValueError("Invalid end-effector body ID (ee_body_id).")
         
+        # data.ctrl[self.i_start_ctrl:self.i_end_ctrl] = self.q_desired
+        # self.q_out[:] = data.qpos[self.i_start_qpos:self.i_end_qpos]
+        # self.p0[:] = data.xpos[self.ee_body_id]
+
+        
         if data.time < self.t_init:
             data.ctrl[self.i_start_ctrl:self.i_end_ctrl] = self.q_desired
             self.q_out[:] = data.qpos[self.i_start_qpos:self.i_end_qpos]
@@ -83,6 +91,7 @@ class Arm:
 
             # Send general actuator commands - Listen as joint position...
             data.ctrl[self.i_start_ctrl:self.i_end_ctrl] = self.q_out
+            data.ctrl[5]= 1.5#np.random.uniform(0,1.57)#
             
     def get_CoM_pos(self, data):
         self.pc = data.xpos[self.base_body_id]

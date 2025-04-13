@@ -7,6 +7,7 @@ from Arm import Arm
 from Robot import RobotGo2
 from Perception import Perception
 from ConfigurationGenerator import ConfigGenerator
+import time
 
 # ========== Paths ==========
 XML_PATH = "../xml/scene.xml"
@@ -95,24 +96,34 @@ glfw.set_scroll_callback(window, scroll_callback)
 # Update arm pos
 mujoco.mj_forward(model,data)
 
-arm_pos_quat, _ = arm.get_CoM_pos(data)
-init_config = generator.generate_config(arm_pos_quat=arm_pos_quat)
+# arm_pos_quat, _ = arm.get_CoM_pos(data)
+# init_config = generator.generate_config(arm_pos_quat=arm_pos_quat)
 
-robot_go2.set_CoM_pos(data,config=init_config)
-
+# robot_go2.set_CoM_pos(data,config=init_config)
 
 
 # mujoco.mj_forward(model,data)
 
-
+t_last = 0.0
 # ========== Control Logic ==========
 def my_controller(model, data):
-    
+    global t_last
     # Cb for arms periodic motion
     arm.control_Cb(model=model, data=data)
     
     # Tracking detected edges of arm
-    perception.get_rgbd_auto_AOI(model, data)
+    # perception.get_rgbd_auto_AOI(model, data)
+
+    # Get new rgb-d image
+    perception.get_rgbd(model, data, perception.perception_context)
+    # Segment occlusions
+    # perception.segment_occlusions(perception.depth)  # Original version
+
+    if (data.time - t_last > 0.034): #fps(30)
+        t_last = data.time
+    
+        rgb, _ = perception._render_camera_view(model, data, perception.perception_context)
+        perception.Cb_DnT(frame=rgb)
 
     #Print joint mapping
     # for i in range(model.njnt):
@@ -126,8 +137,6 @@ def my_controller(model, data):
     # Check Go2 pos of robot
     # print(robot_go2.get_CoM_pos(data=data))
     
-    #Check generator position
-
     csv_writer.writerow([
         data.time,
         arm.ep[0], arm.ep[1], arm.ep[2],
@@ -155,7 +164,9 @@ while not glfw.window_should_close(window):
 
     glfw.swap_buffers(window)
     glfw.poll_events()
-
+    
+    if cv2.waitKey(1) == ord('q'):
+        break
 # ========== Cleanup ==========
 csv_file.close()
 glfw.terminate()
