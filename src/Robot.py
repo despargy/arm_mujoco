@@ -51,23 +51,20 @@ class RobotGo2:
         return self.pc, self.xquat
     
     
-    def set_CoM_pos(self, data, config={}):
+    def set_CoM_pos(self, data, config):
         # Set the position of the robot's center of mass (CoM) via qpos.
-        if "robot" in config:
-            pos_x = config["robot"]["x"]
-            pos_y = config["robot"]["y"]
-            yaw = config["robot"]["yaw"]
-            
-            
-            pos_z = 0.35 #base height
-            
-            quat = self.euler_to_quat(0.0, 0.0, yaw)  #[w, x, y, z]
-            
-            # [pos_x, pos_y, pos_z, quat_w, quat_x, quat_y, quat_z]
-            new_base_state = np.concatenate(([pos_x, pos_y, pos_z], quat))
-            
-            data.qpos[self.i_base_start_qpos:self.i_base_end_qpos] = new_base_state
-            
-            print("RobotGo2: set base qpos:", data.qpos[self.i_base_start_qpos:self.i_base_end_qpos])
-        else:
-            pass
+        
+        pos_x = config[0]
+        pos_y = config[1]
+        yaw = config[2]
+        
+        pos_z = 0.35 #base height
+        
+        quat = self.euler_to_quat(0.0, 0.0, yaw)  #[w, x, y, z]
+        
+        # [pos_x, pos_y, pos_z, quat_w, quat_x, quat_y, quat_z]
+        new_base_state = np.concatenate(([pos_x, pos_y, pos_z], quat))
+        
+        data.qpos[self.i_base_start_qpos:self.i_base_end_qpos] = new_base_state
+        
+        print("RobotGo2: set base qpos:", data.qpos[self.i_base_start_qpos:self.i_base_end_qpos])
