@@ -7,6 +7,7 @@ from Arm import Arm
 from Robot import RobotGo2
 from Perception import Perception
 from ConfigurationGenerator import ConfigGenerator
+from yolo_detector import YOLODetector
 import time
 
 # ========== Paths ==========
@@ -22,6 +23,7 @@ arm = Arm()
 robot_go2 = RobotGo2()
 perception = Perception()
 generator = ConfigGenerator()
+yolo = YOLODetector()
 
 
 
@@ -123,6 +125,16 @@ def my_controller(model, data):
         t_last = data.time
     
         rgb, _ = perception._render_camera_view(model, data, perception.perception_context)
+        
+        # detections = yolo.detect(rgb)
+        
+        
+        # for label, conf, (x1, y1, x2, y2) in detections:
+        #     cv2.rectangle(perception.rgb, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        #     cv2.putText(perception.rgb, f"{label} {conf:.2f}", (x1, y1 - 10),
+        #                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        # cv2.imshow("YOLO Detection", perception.rgb)
+        
         perception.Cb_DnT(frame=rgb)
 
     #Print joint mapping
