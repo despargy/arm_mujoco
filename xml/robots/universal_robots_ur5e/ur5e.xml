@@ -102,7 +102,7 @@
    
     <!-- Collision -->
     <geom name="joint_1" quat="1 0 1 0" pos="0 -1.04 2" class="one_joint_col"/>
-    <body name="base_ur5e" pos="2.2 -2.3 0.19" quat="1 0 0 1" childclass="ur5e" >
+    <body name="base_ur5e" pos="0 0 0.19" quat="1 0 0 1" childclass="ur5e" >
 
         <!-- Collision -->
         <geom name="joint_2" quat="1 0 1 0" pos="2.2 -2.3 0.19" class="one_joint_col"/>
