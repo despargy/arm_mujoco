@@ -2,7 +2,7 @@ import numpy as np
 
 
 class ConfigGenerator:
-    def __init__(self, inner_radius=0.8, outer_radius=3.0):
+    def __init__(self, inner_radius=1.0, outer_radius=3.0):
         """
         Initialize the configuration generator for the robot.
 
