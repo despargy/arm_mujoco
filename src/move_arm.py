@@ -149,12 +149,12 @@ def my_controller(model, data):
     # Check Go2 pos of robot
     # print(robot_go2.get_CoM_pos(data=data))
     
-    csv_writer.writerow([
-        data.time,
-        arm.ep[0], arm.ep[1], arm.ep[2],
-        arm.p_c[0], arm.p_c[1], arm.p_c[2],
-        arm.p_d[0], arm.p_d[1], arm.p_d[2]
-    ])
+    # csv_writer.writerow([
+    #     data.time,
+    #     arm.ep[0], arm.ep[1], arm.ep[2],
+    #     arm.p_c[0], arm.p_c[1], arm.p_c[2],
+    #     arm.p_d[0], arm.p_d[1], arm.p_d[2]
+    # ])
 
 # ========== Main Loop ==========
 while not glfw.window_should_close(window):
