@@ -60,7 +60,7 @@ class Perception:
 
     def get_rgbd(self, model: mujoco.MjModel, data: mujoco.MjData, context: mujoco.MjrContext):
         
-        """Simple camera view, currently not in use."""
+        """Simple camera view"""
         
         
         rgb = np.zeros((self.height, self.width, 3), dtype=np.uint8)
