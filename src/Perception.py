@@ -1,7 +1,8 @@
 import cv2
 import mujoco
 import numpy as np
-from Tag import Tag
+from mujoco_playground._src.dynamic_events.arm_mujoco.src.Tag import Tag
+# from Tag import Tag
 from dt_apriltags import Detector
 from shapely.geometry import Polygon
 from math import atan2
