@@ -35,13 +35,16 @@
       <geom type="cylinder" size="0.05 0.25" rgba="0 1 0 1" mass="0.2"/>
     </body>
      -->
-    <body name="occlusion" pos="0 1.3 1.0">
+     <body name="obstacle1" pos="0 1.3 1.0">
+      <joint type="free"/>
+      <geom type="cylinder" size="0.1 1.0" rgba="0.2 0.5 0.8 1"/>
+     </body>
+    
+    <body name="obstacle2" pos="-0.63 1.3 1.0">
+      <!-- <joint type="free"/> -->
       <geom type="cylinder" size="0.1 1.0" rgba="0.2 0.5 0.8 1"/>
     </body>
-    <body name="occlusion2" pos="-0.63 1.3 1.0">
-      <geom type="cylinder" size="0.1 1.0" rgba="0.2 0.5 0.8 1"/>
-    </body>
-
+    
     
   </worldbody>
   <keyframe>
@@ -52,7 +55,8 @@
     0.1 0.9 -1.8
     -0.1 0.9 -1.8
     0.1 0.9 -1.8
-    -0.1 0.9 -1.8"
+    -0.1 0.9 -1.8
+    0.0 0 0 1 0 0 0"
     ctrl="-1.5708 -1.5708 1.5708 -1.5708 -1.5708 0 0.1 0.9 -1.8 -0.1 0.9 -1.8 0.1 0.9 -1.8 -0.1 0.9 -1.8"/>
 
   </keyframe>

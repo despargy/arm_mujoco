@@ -1,8 +1,9 @@
 import numpy as np
-
+import mujoco
+from utilities import euler_to_quat
 
 class ConfigGenerator:
-    def __init__(self, inner_radius=1.0, outer_radius=2.5):
+    def __init__(self,data,model, inner_radius=1.0, outer_radius=2.5):
         """
         Initialize the configuration generator for the robot.
 
@@ -13,6 +14,9 @@ class ConfigGenerator:
         self.arm_position = np.arange(2)
         self.inner_radius = inner_radius
         self.outer_radius = outer_radius
+        self.obstacle_z = 0.0
+        self.data= data
+        self.model = model
 
 
     def set_arm_position(self, arm_pos_quat):
@@ -21,6 +25,33 @@ class ConfigGenerator:
         
         self.arm_position[0] = arm_pos_quat[0]
         self.arm_position[1] = arm_pos_quat[1]
+        
+    def set_obstacle_position(self, obstacles_coords):
+        
+
+        
+        for (x,y,theta) in obstacles_coords:
+            
+            index = obstacles_coords.index((x,y,theta))
+            
+            
+            obstacle_string = "obstacle"+str(index+1)
+            
+            #get id from string mujoco
+            obstacle_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obstacle_string)
+            
+            print("obstacle id:", obstacle_id)
+            
+            coords = np.array([x,y,self.obstacle_z])
+            print("obstacle coords:", coords)
+                        
+            # self.data.xpos[obstacle_id] = coords  
+            # print(self.data.xpos[obstacle_id])
+            
+            # self.data.geom_xpos[obstacle_id] = coords
+            # print("qpos object", self.data.qpos[obstacle_id])
+                  
+        
         
         
     def generate_go2_config(self):
@@ -45,9 +76,11 @@ class ConfigGenerator:
         Returns:
             List of obstacle configurations.
         """
-        num_obstacles = np.random.randint(1, 3)  # Random number of obstacles between 1 and 3
+        # num_obstacles = np.random.randint(1, 3)  # Random number of obstacles between 1 and 3
+        num_obstacles = 2
         obstacles = []
-
+        
+        
         for _ in range(num_obstacles):
             r = np.sqrt(np.random.uniform(self.inner_radius**2, self.outer_radius**2))
             theta = np.random.uniform(0, 2 * np.pi)
@@ -55,7 +88,9 @@ class ConfigGenerator:
             pos_x = self.arm_position[0] + r * np.cos(theta)
             pos_y = self.arm_position[1] + r * np.sin(theta)
 
-            obstacles.append((pos_x, pos_y))
+            obstacles.append((pos_x, pos_y,theta))
+            
+        self.set_obstacle_position(obstacles)
 
         return obstacles
     
@@ -74,7 +109,7 @@ class ConfigGenerator:
             go2_pos = go2_config[:2]  # (x, y)
 
             # compute all distances from go2 to all obstacles
-            distances = [np.linalg.norm(go2_pos - np.array(obs_pos)) for obs_pos in obstacles]
+            distances = [np.linalg.norm(go2_pos - np.array(obs_pos)[:2]) for obs_pos in obstacles]
             
             if all(d > min_clearance for d in distances):
                 break  # Valid placement found

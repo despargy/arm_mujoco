@@ -14,6 +14,7 @@ class RobotGo2:
         
         self.i_start_qpos = 13
         self.i_end_qpos = self.i_start_qpos +  12 # 12 general actuators
+        print("RobotGo2: i_end_qpos:", self.i_end_qpos)
 
         self.i_start_xpos = 0
         self.i_end_xpos = self.i_start_xpos + 7
@@ -45,7 +46,6 @@ class RobotGo2:
     def get_CoM_pos(self, data):
 
         self.pc = data.xpos[self.base_body_id_]
-        print(self.pc)
         self.xquat = data.xquat[self.base_body_id_]  # [w, x, y, z]
 
         return self.pc, self.xquat
@@ -57,6 +57,7 @@ class RobotGo2:
         pos_x = config[0]
         pos_y = config[1]
         yaw = config[2]
+        print("RobotGo2: set base pos:", pos_x, pos_y, yaw)
         
         pos_z = 0.35 #base height
         
@@ -67,4 +68,4 @@ class RobotGo2:
         
         data.qpos[self.i_base_start_qpos:self.i_base_end_qpos] = new_base_state
         
-        print("RobotGo2: set base qpos:", data.qpos[self.i_base_start_qpos:self.i_base_end_qpos])
+        # print("RobotGo2: set base qpos:", data.qpos[self.i_base_start_qpos:self.i_base_end_qpos])

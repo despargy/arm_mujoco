@@ -22,8 +22,12 @@ data = mujoco.MjData(model)
 arm = Arm()
 robot_go2 = RobotGo2()
 perception = Perception()
-generator = ConfigGenerator()
+generator = ConfigGenerator(data,model)
 yolo = YOLODetector()
+
+
+
+
 
 
 
@@ -101,10 +105,14 @@ mujoco.mj_forward(model,data)
 arm_pos_quat, _ = arm.get_CoM_pos(data)
 generator.set_arm_position(arm_pos_quat)
 
+
 go2_config, obstacles = generator.generate_config()
 
 
+
+
 robot_go2.set_CoM_pos(data,config=go2_config)
+
 
 
 mujoco.mj_forward(model,data)
