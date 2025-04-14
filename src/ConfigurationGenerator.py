@@ -1,6 +1,6 @@
 import numpy as np
 import mujoco
-from utilities import euler_to_quat
+# from utilities import euler_to_quat
 
 class ConfigGenerator:
     def __init__(self,data,model, inner_radius=1.0, outer_radius=2.5):
