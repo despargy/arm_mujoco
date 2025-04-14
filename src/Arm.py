@@ -13,7 +13,7 @@ class Arm:
         self.kp = 15    
         self.freq = 2.0
         self.Ax, self.Ay, self.Az = 0.01, 0.01, 0.05
-        self.dt = 0.002 #model.opt.timestep
+        self.dt = 0.005 #model.opt.timestep
         # Position variables
         self.p0 = np.zeros(3)
         self.q_out = np.zeros(6)

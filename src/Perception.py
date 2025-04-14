@@ -367,7 +367,7 @@ class Perception:
                     del self.AllTagsDict[id]
                 self.n_tags = len(self.AllTagsDict)
                 # print("My Perception is: \n", self.AllTagsDict)
-                print("n_tags = ", self.n_tags)
+                # print("n_tags = ", self.n_tags)
 
             # Centroids if more than 2 tags
             if (self.n_tags < 3):
@@ -396,7 +396,7 @@ class Perception:
 
 
 
-        print(self.area_btw_tags)
+        # print(self.area_btw_tags)
 
         if not (len(self.coords) == 0): 
             pts = np.array(self.coords, dtype=np.int32)

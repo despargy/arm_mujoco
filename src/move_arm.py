@@ -100,27 +100,24 @@ glfw.set_scroll_callback(window, scroll_callback)
 
 # print(robot_go2.get_CoM_pos(data=data))
 # Update arm pos
-mujoco.mj_forward(model,data)
 
+
+
+
+
+    
 arm_pos_quat, _ = arm.get_CoM_pos(data)
 generator.set_arm_position(arm_pos_quat)
-
-
-go2_config, obstacles = generator.generate_config()
-
-
-
-
+go2_config, obstacles = generator.generate_config(min_clearance=0.4)
 robot_go2.set_CoM_pos(data,config=go2_config)
 
 
-
-mujoco.mj_forward(model,data)
-
+start_time = time.time()
 t_last = 0.0
 # ========== Control Logic ==========
 def my_controller(model, data):
     global t_last
+    
     # Cb for arms periodic motion
     arm.control_Cb(model=model, data=data)
     
@@ -142,7 +139,7 @@ def my_controller(model, data):
         # Run detection
         predicted , _ = yolo.detect(frame=rgb)
                 
-        print("Predicted: ", predicted)
+        # print("Predicted: ", predicted)
         perception.Cb_DnT(frame=rgb)
 
     #Print joint mapping
@@ -166,6 +163,8 @@ def my_controller(model, data):
 
 # ========== Main Loop ==========
 while not glfw.window_should_close(window):
+    
+
     my_controller(model, data)
 
     sim_start = data.time
