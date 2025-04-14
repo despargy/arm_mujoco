@@ -53,8 +53,8 @@ mujoco.mjv_defaultCamera(cam)
 cam.type = mujoco.mjtCamera.mjCAMERA_FREE
 mujoco.mjv_defaultOption(opt)
 
-cam.azimuth, cam.elevation, cam.distance = -90.48, -40.10, 3.21
-cam.lookat[:] = [2.5, -1, 0.3]
+cam.azimuth, cam.elevation, cam.distance = -90.48, -40.10, 5
+cam.lookat[:] = [0.0, 2, 0.5]
 
 # ========== Mouse Handling ==========
 mouse = {"left": False, "middle": False, "right": False, "last_x": 0.0, "last_y": 0.0}
@@ -99,12 +99,15 @@ glfw.set_scroll_callback(window, scroll_callback)
 mujoco.mj_forward(model,data)
 
 arm_pos_quat, _ = arm.get_CoM_pos(data)
-init_config = generator.generate_config(arm_pos_quat=arm_pos_quat)
+generator.set_arm_position(arm_pos_quat)
 
-robot_go2.set_CoM_pos(data,config=init_config)
+go2_config, obstacles = generator.generate_config()
 
 
-# mujoco.mj_forward(model,data)
+robot_go2.set_CoM_pos(data,config=go2_config)
+
+
+mujoco.mj_forward(model,data)
 
 t_last = 0.0
 # ========== Control Logic ==========
@@ -124,17 +127,14 @@ def my_controller(model, data):
     if (data.time - t_last > 0.034): #fps(30)
         t_last = data.time
     
+ 
         rgb, _ = perception._render_camera_view(model, data, perception.perception_context)
-        
-        # detections = yolo.detect(rgb)
-        
-        
-        # for label, conf, (x1, y1, x2, y2) in detections:
-        #     cv2.rectangle(perception.rgb, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        #     cv2.putText(perception.rgb, f"{label} {conf:.2f}", (x1, y1 - 10),
-        #                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-        # cv2.imshow("YOLO Detection", perception.rgb)
-        
+
+
+        # Run detection
+        predicted , _ = yolo.detect(frame=rgb)
+                
+        print("Predicted: ", predicted)
         perception.Cb_DnT(frame=rgb)
 
     #Print joint mapping
@@ -149,12 +149,12 @@ def my_controller(model, data):
     # Check Go2 pos of robot
     # print(robot_go2.get_CoM_pos(data=data))
     
-    csv_writer.writerow([
-        data.time,
-        arm.ep[0], arm.ep[1], arm.ep[2],
-        arm.p_c[0], arm.p_c[1], arm.p_c[2],
-        arm.p_d[0], arm.p_d[1], arm.p_d[2]
-    ])
+    # csv_writer.writerow([
+    #     data.time,
+    #     arm.ep[0], arm.ep[1], arm.ep[2],
+    #     arm.p_c[0], arm.p_c[1], arm.p_c[2],
+    #     arm.p_d[0], arm.p_d[1], arm.p_d[2]
+    # ])
 
 # ========== Main Loop ==========
 while not glfw.window_should_close(window):
