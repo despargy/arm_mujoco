@@ -68,4 +68,7 @@ class RobotGo2:
         
         data.qpos[self.i_base_start_qpos:self.i_base_end_qpos] = new_base_state
         
+        #update the pc and xquat
+        self.get_CoM_pos(self,data)
+        
         # print("RobotGo2: set base qpos:", data.qpos[self.i_base_start_qpos:self.i_base_end_qpos])
