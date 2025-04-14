@@ -42,7 +42,6 @@ class Arm:
 
     def control_Cb(self, model, data):
         self.t = data.time - self.t_init
-        print("arm")
         # End-effector body id
         self.ee_body_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "wrist_3_link")
         if self.ee_body_id == -1:
@@ -51,7 +50,7 @@ class Arm:
         # data.ctrl[self.i_start_ctrl:self.i_end_ctrl] = self.q_desired
         # self.q_out[:] = data.qpos[self.i_start_qpos:self.i_end_qpos]
         # self.p0[:] = data.xpos[self.ee_body_id]
-        print()
+    
         
         if data.time < self.t_init:
             data.ctrl[self.i_start_ctrl:self.i_end_ctrl] = self.q_desired
