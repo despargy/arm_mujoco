@@ -28,32 +28,20 @@ class ConfigGenerator:
         
     def set_obstacle_position(self, obstacles_coords):
         
+        fixed_quat = [1, 0, 0, 0]
 
-        
-        for (x,y,theta) in obstacles_coords:
+
+        for i, (x, y, _) in enumerate(obstacles_coords):
             
-            index = obstacles_coords.index((x,y,theta))
+            joint_name = f"obstacle{i+1}_free"
             
+            joint_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, joint_name)
+            qpos_index = self.model.jnt_qposadr[joint_id]
+
+            coords = np.array([x, y, self.obstacle_z])
+            self.data.qpos[qpos_index: qpos_index + 7] = np.concatenate((coords, fixed_quat))
+
             
-            obstacle_string = "obstacle"+str(index+1)
-            
-            #get id from string mujoco
-            obstacle_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, obstacle_string)
-            
-            print("obstacle id:", obstacle_id)
-            
-            coords = np.array([x,y,self.obstacle_z])
-            print("obstacle coords:", coords)
-                        
-            # self.data.xpos[obstacle_id] = coords  
-            # print(self.data.xpos[obstacle_id])
-            
-            # self.data.geom_xpos[obstacle_id] = coords
-            # print("qpos object", self.data.qpos[obstacle_id])
-                  
-        
-        
-        
     def generate_go2_config(self):
         r = np.sqrt(np.random.uniform(self.inner_radius**2, self.outer_radius**2))
 
@@ -82,8 +70,9 @@ class ConfigGenerator:
         
         
         for _ in range(num_obstacles):
+            
             r = np.sqrt(np.random.uniform(self.inner_radius**2, self.outer_radius**2))
-            theta = np.random.uniform(0, 2 * np.pi)
+            theta = np.random.uniform(0, np.pi)
 
             pos_x = self.arm_position[0] + r * np.cos(theta)
             pos_y = self.arm_position[1] + r * np.sin(theta)
@@ -95,11 +84,9 @@ class ConfigGenerator:
         return obstacles
     
     
-    def generate_config(self):
+    def generate_config(self, min_clearance = 1.0):
         obstacles = self.generate_obstacles()
         
-        min_clearance = 0.3 #minimum distance to obstacle
-
         # find a valid go2_config(it has to be greater than 0.3 from all obstacles)
         while True:
             
