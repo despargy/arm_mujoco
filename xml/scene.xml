@@ -3,12 +3,13 @@
   <statistic center="3 0 0.1" extent="0.8"/>
 	<option timestep="0.002"/>
 
+  <include file="robots/bin.xml"/>
+
   <!-- <include file="robots/defaults.xml"/> -->
   <include file="robots/universal_robots_ur5e/ur5e.xml"/>
   <include file="robots/unitree_go2/go2_mjx.xml"/>
+  <!-- <include file="robots/ventionTable.xml"/> -->
 
-  <include file="robots/ventionTable.xml"/>
-  <include file="robots/bin.xml"/>
 
   <visual>
     <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
