@@ -5,7 +5,7 @@
 
   <!-- <include file="robots/ventionTable.xml"/> -->
   <!-- <include file="robots/defaults.xml"/> -->
-  <!-- <include file="robots/bin.xml"/> -->
+  <include file="robots/bin.xml"/>
   <include file="robots/universal_robots_ur5e/ur5e.xml"/>
   <include file="robots/unitree_go2/go2_mjx.xml"/>
 
