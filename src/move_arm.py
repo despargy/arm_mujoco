@@ -7,7 +7,7 @@ from Arm import Arm
 from Robot import RobotGo2
 from Perception import Perception
 from ConfigurationGenerator import ConfigGenerator
-from yolo_detector import YOLODetector
+# from yolo_detector import YOLODetector
 import time
 
 # ========== Paths ==========
@@ -23,7 +23,7 @@ arm = Arm()
 robot_go2 = RobotGo2()
 perception = Perception()
 generator = ConfigGenerator(data,model)
-yolo = YOLODetector()
+# yolo = YOLODetector()
 
 
 
@@ -137,7 +137,7 @@ def my_controller(model, data):
 
 
         # Run detection
-        predicted , _ = yolo.detect(frame=rgb)
+        # predicted , _ = yolo.detect(frame=rgb)
                 
         # print("Predicted: ", predicted)
         perception.Cb_DnT(frame=rgb)

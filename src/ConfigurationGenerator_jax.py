@@ -41,7 +41,11 @@ class ConfigGenerator:
         num_obstacles = 2
         obstacles = []
         for i in range(num_obstacles):
-            r = jp.sqrt(jp.random.uniform(jax.random.PRNGKey(i+2), (), minval=self.inner_radius**2, maxval=self.outer_radius**2))
+            
+            rng, key = jax.random.split(rng)
+
+            
+            r = jp.sqrt(jp.random.uniform(key, (), minval=self.inner_radius**2, maxval=self.outer_radius**2))
             theta = jp.random.uniform(jax.random.PRNGKey(i+3), (), minval=0, maxval=jp.pi)
             pos_x = self.arm_position[0] + r * jp.cos(theta)
             pos_y = self.arm_position[1] + r * jp.sin(theta)
