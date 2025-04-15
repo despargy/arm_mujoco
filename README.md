@@ -35,6 +35,7 @@
 
 This repo can be used either as a tutorial and first interastion regarding robotic arms either..... as a scene for another package. Stay tuned!
 
+
 ## Clone and Run(Python)
 
    ```sh
@@ -50,7 +51,12 @@ Visualize Results
    python3 plot.py
    ```
 
+## Dependencies
 
+   ```sh
+  pip install shapely
+  pip install dt-apriltags
+   ```
 
 ## Contact
    Despina-Ekaterini Argiropoulos - despinar@ics.forth.gr         
