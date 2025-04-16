@@ -6,7 +6,7 @@ import csv
 from Arm import Arm
 from Robot import RobotGo2
 from Perception import Perception
-from ConfigurationGenerator import ConfigGenerator
+# from ConfigurationGenerator import ConfigGenerator
 # from yolo_detector import YOLODetector
 import time
 
@@ -22,7 +22,7 @@ data = mujoco.MjData(model)
 arm = Arm()
 robot_go2 = RobotGo2()
 perception = Perception()
-generator = ConfigGenerator(data,model)
+# generator = ConfigGenerator(data,model)
 # yolo = YOLODetector()
 
 
@@ -103,13 +103,10 @@ glfw.set_scroll_callback(window, scroll_callback)
 
 
 
-
-
-    
-arm_pos_quat, _ = arm.get_CoM_pos(data)
-generator.set_arm_position(arm_pos_quat)
-go2_config, obstacles = generator.generate_config(min_clearance=0.4)
-robot_go2.set_CoM_pos(data,config=go2_config)
+# arm_pos_quat, _ = arm.get_CoM_pos(data)
+# generator.set_arm_position(arm_pos_quat)
+# go2_config, obstacles = generator.generate_config(min_clearance=0.4)
+# robot_go2.set_CoM_pos(data,config=go2_config)
 
 
 start_time = time.time()
