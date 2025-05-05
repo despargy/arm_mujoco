@@ -146,6 +146,8 @@ def my_controller(model, data):
     # Check Go2 pos of robot
     # print(robot_go2.get_CoM_pos(data=data))
     
+    
+    # ================== UNCOMMENT IF YOU WANT TO LOG THE ARM MOVEMENT  ==================
     # csv_writer.writerow([
     #     data.time,
     #     arm.ep[0], arm.ep[1], arm.ep[2],
