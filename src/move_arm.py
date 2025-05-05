@@ -6,8 +6,7 @@ import csv
 from Arm import Arm
 from Robot import RobotGo2
 from Perception import Perception
-# from ConfigurationGenerator import ConfigGenerator
-# from yolo_detector import YOLODetector
+from ConfigurationGenerator import ConfigGenerator
 import time
 
 # ========== Paths ==========
@@ -22,8 +21,7 @@ data = mujoco.MjData(model)
 arm = Arm()
 robot_go2 = RobotGo2()
 perception = Perception()
-# generator = ConfigGenerator(data,model)
-# yolo = YOLODetector()
+generator = ConfigGenerator(data,model)
 
 
 
@@ -103,10 +101,10 @@ glfw.set_scroll_callback(window, scroll_callback)
 
 
 
-# arm_pos_quat, _ = arm.get_CoM_pos(data)
-# generator.set_arm_position(arm_pos_quat)
-# go2_config, obstacles = generator.generate_config(min_clearance=0.4)
-# robot_go2.set_CoM_pos(data,config=go2_config)
+arm_pos_quat, _ = arm.get_CoM_pos(data)
+generator.set_arm_position(arm_pos_quat)
+go2_config, obstacles = generator.generate_config(min_clearance=0.4)
+robot_go2.set_CoM_pos(data,config=go2_config)
 
 
 start_time = time.time()
@@ -132,9 +130,6 @@ def my_controller(model, data):
  
         rgb, _ = perception._render_camera_view(model, data, perception.perception_context)
 
-
-        # Run detection
-        # predicted , _ = yolo.detect(frame=rgb)
                 
         # print("Predicted: ", predicted)
         perception.Cb_DnT(frame=rgb)

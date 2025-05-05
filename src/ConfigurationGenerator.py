@@ -1,7 +1,5 @@
 import numpy as np
 import mujoco
-import jax
-import jax.numpy as jp
 # from utilities import euler_to_quat
 
 class ConfigGenerator:
@@ -13,7 +11,7 @@ class ConfigGenerator:
             inner_radius (float): Minimum distance from the arm (restricted zone).
             outer_radius (float): Maximum distance from the arm for spawning.
         """
-        self.arm_position = jp.arange(2)
+        self.arm_position = np.arange(2)
         self.inner_radius = inner_radius
         self.outer_radius = outer_radius
         self.obstacle_z = 0.0
@@ -23,10 +21,10 @@ class ConfigGenerator:
 
     def set_arm_position(self, arm_pos_quat):
         
-        arm_pos_quat = jp.array(arm_pos_quat)
+        arm_pos_quat = np.array(arm_pos_quat)
         
-        self.arm_position = self.arm_position.at[0].set(arm_pos_quat[0])
-        self.arm_position = self.arm_position.at[1].set(arm_pos_quat[1])
+        self.arm_position[0] = arm_pos_quat[0]
+        self.arm_position[1] = arm_pos_quat[1]
         
     def set_obstacle_position(self, obstacles_coords):
         
@@ -40,7 +38,7 @@ class ConfigGenerator:
             joint_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, joint_name)
             qpos_index = self.model.jnt_qposadr[joint_id]
 
-            coords = jp.array([x, y, self.obstacle_z])
+            coords = np.array([x, y, self.obstacle_z])
             self.data.qpos[qpos_index: qpos_index + 7] = np.concatenate((coords, fixed_quat))
 
             
@@ -48,7 +46,8 @@ class ConfigGenerator:
         r = np.sqrt(np.random.uniform(self.inner_radius**2, self.outer_radius**2))
 
         arc_span = np.deg2rad(90)        
-        theta_center = np.pi / 2          # facing "forward" (in +y)
+        theta_center = np.pi / 2   
+    # facing "forward" (in +y)
         theta = np.random.uniform(theta_center - arc_span / 2, theta_center + arc_span / 2)
 
         pos_x = self.arm_position[0] + r * np.cos(theta)

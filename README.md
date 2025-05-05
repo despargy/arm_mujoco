@@ -20,7 +20,7 @@
 
 
 
-<h3>Supports: UR5 </h3>
+<h3>Supports: UR5, Unitree Go2 </h3>
 <h3 align="center"> A simple position controller for periodic motions in Mujoco.</h3> 
 
 <p align="center">
@@ -59,13 +59,20 @@ Visualize Results
    ```
 
 ## Contact
-   Despina-Ekaterini Argiropoulos - despinar@ics.forth.gr         
-
+   Despina-Ekaterini Argiropoulos - despinar@ics.forth.gr 
+         
 [![LinkedIn][linkedin-shield]][linkedin-url] 
 
 
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]:https://www.linkedin.com/in/despar/
+
+Dimitris Gkoutzounis - dimgkoutz@ics.forth.gr  
+
+[![LinkedIn][linkedin-shield]][linkedin-url] 
+
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]:https://www.linkedin.com/in/dimgkoutz/
 
 
 ## License
